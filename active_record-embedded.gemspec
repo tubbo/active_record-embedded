@@ -14,13 +14,13 @@ Gem::Specification.new do |s|
   s.description = s.summary
   s.license     = "MIT"
 
-  spec.files    = `git ls-files -z`.split("\x0").reject do |f|
+  s.files    = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(bin|test|spec|features)/})
   end
-
 
   s.add_dependency "activerecord", ActiveRecord::Embedded::RAILS_VERSION
 
   s.add_development_dependency "rails", ActiveRecord::Embedded::RAILS_VERSION
-  s.add_development_dependency "sqlite3"
+  s.add_development_dependency "pg"
+  s.add_development_dependency "pry-byebug", '~> 3'
 end
