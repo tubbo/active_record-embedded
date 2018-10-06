@@ -1,0 +1,16 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  items:
+    item_one:
+      sku: SKU123
+      quantity: 1
+    item_two:
+      sku: SKU456
+      quantity: 2
+
+two:
+  items:
+    item_one:
+      sku: SKU123
+      quantity: 4
