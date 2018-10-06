@@ -2,15 +2,13 @@ default: &default
   adapter: postgresql
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  database: active_record_embedded_test
 
 development:
   <<: *default
-  database: active_record_embedded_development
 
 test:
   <<: *default
-  database: active_record_embedded_test
 
 production:
   <<: *default
-  database: active_record_embedded_production
