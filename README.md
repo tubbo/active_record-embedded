@@ -83,8 +83,8 @@ Embedded relations can be queried like any other model.
 # Find all items with a quantity of 1
 @order.items.where(quantity: 1) # => <ActiveRecord::Embedded::Relation ...>
 
-# Sort items by their quantity
-@order.items.order(:quantity, :desc) # => <ActiveRecord::Embedded::Relation ...>
+# Sort items by their SKU
+@order.items.order(sku: :desc) # => <ActiveRecord::Embedded::Relation ...>
 ```
 
 Data is lazy-loaded, meaning the query on the original model is not
