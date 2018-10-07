@@ -32,10 +32,12 @@ module ActiveRecord
 
       def where(filters = {})
         @filters = filters
+        self
       end
 
-      def order(attribute, direction = :asc)
-        @sorts = { attribute => direction }
+      def order(sorts = {})
+        @sorts = sorts
+        self
       end
     end
   end

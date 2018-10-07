@@ -3,8 +3,9 @@ module ActiveRecord
     class Model
       include ActiveModel::Model
 
-      class_attribute :embed, :fields
+      class_attribute :embed, :fields, :associations
       self.fields ||= {}
+      self.associations ||= {}
 
       class << self
         def embedded_in(name)
@@ -12,10 +13,8 @@ module ActiveRecord
           define_method(name) { _parent }
         end
 
-        def field(name, type: String, default: nil)
-          self.fields[name] = field = Field.new(
-            name: name, type: type, default: default
-          )
+        def field(name, **options)
+          self.fields[name] = field = Field.new(name: name, **options)
           define_method(name) { field.cast(self[name]) }
           define_method("#{name}=") { |value| self[name] = field.cast(value) }
         end
@@ -25,9 +24,9 @@ module ActiveRecord
 
       attr_reader :_parent, :_association, :attributes
 
-      def initialize(_parent: , _association: , **attributes)
-        @_parent = _parent
+      def initialize(_parent: nil, _association: nil, **attributes)
         @_association = _association
+        @_parent = _parent || attributes[self.embed.name]
         @attributes = cast_attributes(attributes)
 
         super(attributes)
@@ -69,7 +68,7 @@ module ActiveRecord
 
       def cast(attribute, value)
         field = self.class.fields[attribute]
-        raise "Field :#{attribute} is not defined on #{self.class}" if field.blank?
+        raise Field::NotDefinedError.new(attribute, self.class.name) if field.blank?
         self.class.fields[attribute].cast(value)
       end
     end

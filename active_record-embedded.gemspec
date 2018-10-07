@@ -23,4 +23,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rails", ActiveRecord::Embedded::RAILS_VERSION
   s.add_development_dependency "pg"
   s.add_development_dependency "pry-byebug", '~> 3'
+  s.add_development_dependency "simplecov"
 end

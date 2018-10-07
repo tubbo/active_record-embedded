@@ -1,15 +1,5 @@
 require 'test_helper'
 
-class Foo
-  attr_reader :parent, :association, :foo
-
-  def initialize(_parent: , _association: , foo: )
-    @parent = _parent
-    @association = _association
-    @foo = foo
-  end
-end
-
 module ActiveRecord
   module Embedded
     class AssociationTest < ActiveSupport::TestCase

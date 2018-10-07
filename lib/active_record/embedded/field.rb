@@ -5,7 +5,7 @@ module ActiveRecord
 
       attr_reader :name, :type, :default
 
-      def initialize(name: , type: , default: nil)
+      def initialize(name: , type: String, default: nil)
         @name = name
         @type = type
         @default = default
@@ -24,7 +24,7 @@ module ActiveRecord
         when 'Array'
           value.to_a
         else
-          raise TypeError, "#{type} is not a valid type"
+          raise TypeError, type
         end
       end
     end

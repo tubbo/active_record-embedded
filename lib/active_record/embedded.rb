@@ -1,6 +1,8 @@
 require "active_support/all"
 require "active_record/embedded/engine"
 require "active_record/embedded/field"
+require "active_record/embedded/field/not_defined_error"
+require "active_record/embedded/field/type_error"
 require "active_record/embedded/association"
 require "active_record/embedded/association/many"
 require "active_record/embedded/association/one"
