@@ -75,8 +75,28 @@ class OrderTest < ActiveSupport::TestCase
 
   test 'failure to save' do
     order = orders(:one)
+    item = order.items.build
 
     refute order.items.create.valid?
-    assert_raises(ActiveRecord::RecordNotSaved) { order.items.create! }
+
+    assert_raises(ActiveRecord::RecordNotSaved) do
+      item.save!
+    end
+    assert_raises(ActiveRecord::RecordNotSaved) do
+      order.items.create!
+    end
+
+    item.quantity = 1
+
+    assert item.save!
+  end
+
+  test 'reload' do
+    order = orders(:one)
+    item = order.items.first
+    bogus = order.items.build
+
+    assert item.reload
+    assert_raises(ActiveRecord::RecordNotFound) { bogus.reload }
   end
 end

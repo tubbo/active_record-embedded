@@ -9,6 +9,10 @@ module ActiveRecord
           )
         end
 
+        def get(model, id)
+          find(model).find(id)
+        end
+
         def assign(model, items)
           model[name] = items.each_with_object({}) do |item, data|
             embedded = build(model, item.to_h)

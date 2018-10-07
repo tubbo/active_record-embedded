@@ -42,6 +42,12 @@ module ActiveRecord
         self.class.new(association: @association, model: @model, filters: @filters, sorts: sorts)
       end
 
+      def find(id)
+        params = model[association.name][id]
+        raise RecordNotFound, id unless params.present?
+        build(params)
+      end
+
       private
 
       def apply_sorts!(data)

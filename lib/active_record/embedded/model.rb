@@ -57,7 +57,7 @@ module ActiveRecord
       end
 
       def reload
-        self.attributes = _association.find(_parent)
+        self.attributes = _attributes_from_database
         self
       end
 
@@ -89,6 +89,10 @@ module ActiveRecord
         field = self.class.fields[attribute]
         raise Field::NotDefinedError.new(attribute, self.class.name) if field.blank?
         self.class.fields[attribute].cast(value)
+      end
+
+      def _attributes_from_database
+        _association.get(_parent, id).attributes
       end
     end
   end
