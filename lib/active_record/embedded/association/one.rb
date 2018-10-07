@@ -6,7 +6,7 @@ module ActiveRecord
           build model, model[name]
         end
 
-        def update(model, embedded)
+        def assign(model, embedded)
           model[name] = embedded
           find(model)
         end

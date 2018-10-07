@@ -24,6 +24,9 @@ Create a new model in **app/models/item.rb**:
 class Item < ActiveRecord::Embedded::Base
   field :sku
   field :quantity, type: Integer
+  field :customizations, type: Hash
+  field :price, type: Float
+  field :discounts, type: Array
 end
 ```
 
@@ -183,3 +186,4 @@ The gem is available as open source under the terms of the [MIT License][].
 [MIT License]: https://opensource.org/licenses/MIT
 [code of conduct]: https://www.contributor-covenant.org/version/1/4/code-of-conduct
 [YARD Documentation]: https://www.rubydoc.info/github/tubbo/active-record_embedded/latest
+[jsonb]: https://www.postgresql.org/docs/9.4/static/datatype-json.html

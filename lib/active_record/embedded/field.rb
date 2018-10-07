@@ -11,7 +11,8 @@ module ActiveRecord
         @default = default
       end
 
-      def cast(value)
+      def cast(value = nil)
+        return unless value.present?
         case type.name
         when 'String'
           value.to_s
@@ -23,8 +24,6 @@ module ActiveRecord
           value.to_h
         when 'Array'
           value.to_a
-        else
-          raise TypeError, type
         end
       end
     end

@@ -42,5 +42,3 @@ class Foo
     @foo = foo
   end
 end
-
-

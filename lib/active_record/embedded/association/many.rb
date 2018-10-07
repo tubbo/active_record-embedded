@@ -9,11 +9,19 @@ module ActiveRecord
           )
         end
 
-        def update(model, items)
+        def assign(model, items)
           model[name] = items.each_with_object({}) do |item, data|
-            embedded = build(model, item)
+            embedded = build(model, item.to_h)
             data[embedded.id] = embedded.attributes
           end
+        end
+
+        def update(model, item)
+          model[name] ||= {}
+          params = item.symbolize_keys
+          id = params[:id]
+
+          model[name][id] = params
         end
       end
     end

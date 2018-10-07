@@ -8,6 +8,12 @@ class Customizations
   end
 end
 
+class Unhashable
+  def initialize(params = {})
+    @attributes = params
+  end
+end
+
 class ItemTest < ActiveSupport::TestCase
   setup do
     @item = Item.new(
@@ -35,12 +41,5 @@ class ItemTest < ActiveSupport::TestCase
     assert_equal 9.0, @item.price
     assert_kind_of Hash, @item.customizations
     assert_equal 'bar', @item.customizations[:foo]
-  end
-
-  test 'fail on invalid type' do
-    exception = ActiveRecord::Embedded::Field::TypeError
-
-    assert_raises(exception) { @item.bogus }
-    assert_raises(exception) { @item.bogus = 'foo' }
   end
 end

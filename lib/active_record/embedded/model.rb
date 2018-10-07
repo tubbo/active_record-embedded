@@ -27,13 +27,9 @@ module ActiveRecord
       def initialize(_parent: nil, _association: nil, **attributes)
         @_association = _association
         @_parent = _parent || attributes[self.embed.name]
-        @attributes = cast_attributes(attributes)
+        @attributes = attributes
 
         super(attributes)
-      end
-
-      def attributes=(params = {})
-        super cast_attributes(params)
       end
 
       def [](key)
@@ -49,8 +45,15 @@ module ActiveRecord
       end
 
       def save
-        _association.update(_parent, attributes)
+        return false unless valid?
+        assign_associated_attributes!
         _parent.save
+      end
+
+      def save!
+        raise ActiveRecord::RecordNotSaved, errors unless valid?
+        assign_associated_attributes!
+        _parent.save!
       end
 
       def reload
@@ -58,7 +61,23 @@ module ActiveRecord
         self
       end
 
+      def inspect
+        params = attributes.map { |key, val| "@#{key}=#{val}" }.join(' ')
+        identifier = super.split(' ').first
+
+        "#{identifier} #{params}>"
+      end
+
+      def assign_attributes(attrs = {})
+        super cast_attributes(attrs)
+      end
+
       private
+
+      def assign_associated_attributes!
+        self.id ||= SecureRandom.hex
+        _association.update(_parent, attributes)
+      end
 
       def cast_attributes(attrs = {})
         attrs.symbolize_keys.each_with_object({}) do |(attr, value), casted|

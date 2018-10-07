@@ -13,19 +13,22 @@ module ActiveRecord
       end
 
       test 'filter by attributes' do
-        assert_equal @query, @query.where(foo: 'bar', bar: 'baz')
-        assert_equal 'bar', @query.filters[:foo]
-        assert_equal 'baz', @query.filters[:bar]
+        filtered = @query.where(foo: 'bar', bar: 'baz')
+
+        assert_equal 'bar', filtered.filters[:foo]
+        assert_equal 'baz', filtered.filters[:bar]
       end
 
       test 'sort in descending order' do
-        assert_equal @query, @query.order(foo: :desc)
-        assert_equal :desc, @query.sorts[:foo]
+        descending = @query.order(foo: :desc)
+
+        assert_equal :desc, descending.sorts[:foo]
       end
 
       test 'sort in ascending order' do
-        assert_equal @query, @query.order(foo: :asc)
-        assert_equal :asc, @query.sorts[:foo]
+        ascending = @query.order(foo: :asc)
+
+        assert_equal :asc, ascending.sorts[:foo]
       end
 
       test 'build model' do
