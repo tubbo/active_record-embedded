@@ -25,4 +25,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "pry-byebug", '~> 3'
   s.add_development_dependency "simplecov"
   s.add_development_dependency "yard", "~> 0.9"
+  s.add_development_dependency "rubocop", "~> 0.51"
 end
