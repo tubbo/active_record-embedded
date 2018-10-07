@@ -2,15 +2,17 @@ language: ruby
 rvm: 2.5.1
 env:
   global:
-    - CC_TEST_REPORTER_ID=ABC123
+  - CC_TEST_REPORTER_ID=ABC123
+  - secure: E1qciWs9aJ+uMIbbM10BgKWvmjG6vqPsmzt9OhVcuQH4yZu3dUf3apiUTGWgpjjCp0+bVkr3KmITobPrDy2ihCM+BQXUJAnIP71i3VdSW3PEZNyFDKAuyPv/dyP0qP5oP6a+zY4P8u080YVrBKj99Wqr9T0teFHbEO9t0ivtJv/+g6lkyvnaLSYHrZPTj4Zq3ujeO3SGD9Or8v/uP8O/aNtrOWBSJ61NP5jOgQln45rTOdJdFvvgUBHgzE5kRzBMecdXZV1s1VwpAdbLtG2fUpsuNnH6gCwnTMNKU3qZ/kZ9XPkOd+qPILhB1Pdiwpw+tmLIkli/l0ObjhIgZeXWMjns19dv4ROeeJfHMAHZx+jkNmyYdZHQObR1Cz9LVvojjQ193w3hRcqJJLnfOXwsGhk6UERsPwge7JaMGnGcqavr66QyipTDYhERae1bICDTz023rhiIbGKGVVS6TsdJ9U+wdhsm6XK0RbXraacIRRhghSU/w0lYn3G4qTffmunJQkKcr7Hx8U5uC2W/CC6RXHGwaHa8kUpBtVQIcTArHaNeJP7GKD3gBXB1Ukl9+N38HlglZliXuCM+3ODSuAxc0ZQjw7UuT5LQS0bIRLv0ndS348ahaGCOvqVzZODVEsH4zpYm4ugW74Cx1T6AMLcZndDUIVK5LsmOpOsHk3q/nSY=
 before_script:
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-  - chmod +x ./cc-test-reporter
-  - ./cc-test-reporter before-build
-  - rails app:db:setup
+- curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+  > ./cc-test-reporter
+- chmod +x ./cc-test-reporter
+- "./cc-test-reporter before-build"
+- rails app:db:setup
 script: rails test
 after_script:
-  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+- "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT"
 deploy:
   provider: rubygems
   api_key:
