@@ -1,7 +1,10 @@
 require 'test_helper'
 
-class ActiveRecord::Embedded::Test < ActiveSupport::TestCase
-  test "truth" do
-    assert_kind_of Module, ActiveRecord::Embedded
+module ActiveRecord
+  class EmbeddedTest < ActiveSupport::TestCase
+    test 'is a mixin module' do
+      assert_kind_of Module, ActiveRecord::Embedded
+      assert_kind_of ActiveSupport::Concern, ActiveRecord::Embedded
+    end
   end
 end
