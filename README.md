@@ -93,7 +93,7 @@ class you defined for it, and returned:
 
 ```ruby
 items = @order.items.where(sku: 'SKU123') # => <ActiveRecord::Embedded::Relation ...>
-items = items.order(:created_at, :desc) # => <ActiveRecord::Embedded::Relation ...>
+items = items.order(created_at: :desc) # => <ActiveRecord::Embedded::Relation ...>
 items.map { |item| item } # => <Array<Item>>
 ```
 
