@@ -1,6 +1,8 @@
 # ActiveRecord::Embedded
 
 [![Build Status](https://travis-ci.org/tubbo/active_record-embedded.svg?branch=master)](https://travis-ci.org/tubbo/active_record-embedded)
+[![Maintainability](https://api.codeclimate.com/v1/badges/b0ff9f3ab10969a1e4c2/maintainability)](https://codeclimate.com/github/tubbo/active_record-embedded/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/b0ff9f3ab10969a1e4c2/test_coverage)](https://codeclimate.com/github/tubbo/active_record-embedded/test_coverage)
 
 Embed data in your ActiveRecord models.
 
