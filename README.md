@@ -173,11 +173,25 @@ For more information, check out the [YARD Documentation][]
 
 ## Contributing
 
-Contributions to this library are welcome and encouraged. Please submit
+All contributions to this library are welcome and encouraged. Please submit
 a [pull request][] for changes to documentation or source, and if you see an
-issue, please [report it][]!
+issue, please [report it][]! Please make sure you're familiar with the
+[code of conduct][] when contributing.
 
-[code of conduct][]
+### Running Tests
+
+To run tests, make sure you have a database set up (you only have to do
+this once):
+
+```bash
+$ rails app:db:setup
+```
+
+Run all tests with the following command:
+
+```bash
+$ rails test
+```
 
 ## License
 
