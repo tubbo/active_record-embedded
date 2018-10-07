@@ -19,6 +19,7 @@ class OrderTest < ActiveSupport::TestCase
 
   test 'embeds many items' do
     assert_kind_of ActiveRecord::Embedded::Relation, @order.items
+    refute_empty @order.items
     assert_kind_of Item, @order.items.first
     assert_equal 'SKU456', @order.items.first.sku
   end
