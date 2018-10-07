@@ -16,20 +16,8 @@ module ActiveRecord
 
       def each
         data = model[association.name]
-        data = data.select do |id, params|
-          filters.any? do |filter, value|
-            params[filter.to_s] == value
-          end
-        end unless filters.empty?
-        sorts.each do |attribute, direction|
-          data = data.sort do |(_, last_item), (_, next_item)|
-            if direction == :asc
-              last_item[attribute.to_s] <=> next_item[attribute.to_s]
-            else
-              next_item[attribute.to_s] <=> last_item[attribute.to_s]
-            end
-          end
-        end
+        data = apply_filters!(data)
+        data = apply_sorts!(data)
 
         data.each { |id, params| yield build(params.merge(id: id)) }
       end
@@ -52,6 +40,32 @@ module ActiveRecord
 
       def order(sorts = {})
         self.class.new(association: @association, model: @model, filters: @filters, sorts: sorts)
+      end
+
+      private
+
+      def apply_sorts!(data)
+        sorts.each do |attribute, direction|
+          data = data.sort do |(_, last_item), (_, next_item)|
+            if direction == :asc
+              last_item[attribute.to_s] <=> next_item[attribute.to_s]
+            else
+              next_item[attribute.to_s] <=> last_item[attribute.to_s]
+            end
+          end
+        end
+
+        data
+      end
+
+      def apply_filters!(data)
+        return data if filters.empty?
+
+        data = data.select do |id, params|
+          filters.any? do |filter, value|
+            params[filter.to_s] == value
+          end
+        end
       end
     end
   end
