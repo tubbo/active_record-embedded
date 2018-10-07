@@ -1,0 +1,20 @@
+language: ruby
+rvm: 2.5.1
+env:
+  global:
+    - CC_TEST_REPORTER_ID=ABC123
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+script: rails test
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+deploy:
+  provider: rubygems
+  api_key:
+    secure: tmBC3Zba6vQr8hrlqxOleQcH+g0M3sQEycWp1dqfs0EbW23/QhCrpP4XUgShhxtN3e8LXtoVlRyUL3wS14NcYdnqqpUttVQIl2HC6Sg43ejKE6xBU71N4EmoCV91OeQL1KIAqXZpA+1EhZ/dPyYHEBUPnH0NRnkGDbTtn/WMDHsfuNVD+PXehRvHCQlX8XvpTI6KEOjw0FYjEsBGAhe7p5FIRXgYi7Yak2pp10be/ycWEpo8ptqsEvlM4kcthx5LehDA9RXJpEm3VsrE+/g/9CUIQCdIaE0amCazvyth53BlBn0vso8iQd1PbR1aMmA9IMg7iyr9foXTeW3WG/RwkX+a1ztiB2XV5nQfNrLFscgu7Cm0zABBqfZZDUOP5yqxb35AFCxlDg4SXl5k3fh47ROs5bs3N3KlYxWzWMaP8kqxpYONInxEKFSAweGgxbMKtYFcMKTRdRD2GKxrXtp0LQ6PytKZTvmNIm2vwm6ai42cmoegh2qrboMUWKS9Q/o2Wc38yPAMu8TR7OcaqZ5P/l2MkCvM5w79QB3L1bEmCjWHU0qOJeNtGspxCVK9/ec9GKilkaW8EtCWELwRSY4ZFG2HLaJIPa0lIGyl+amviyk4QPoG2rSgyu7rN3xm0VWpEJRIJsvJ6U3rckVw3eH4jms3GrVy73PRbgTFBIowqrk=
+  gem: active_record-embedded
+  on:
+    tags: true
+    repo: tubbo/active_record-embedded

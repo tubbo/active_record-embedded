@@ -1,5 +1,7 @@
 # ActiveRecord::Embedded
 
+[![Build Status](https://travis-ci.org/tubbo/active_record-embedded.svg?branch=master)](https://travis-ci.org/tubbo/active_record-embedded)
+
 Embed data in your ActiveRecord models.
 
 ## Installation
