@@ -92,7 +92,7 @@ module ActiveRecord
       end
 
       def _attributes_from_database
-        _association.get(_parent, id).attributes
+        _association.find(_parent, id).attributes
       end
     end
   end

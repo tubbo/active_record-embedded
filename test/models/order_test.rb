@@ -36,8 +36,7 @@ class OrderTest < ActiveSupport::TestCase
     refute_empty order.items
     assert_kind_of Item, item
     assert_equal 'SKU456', item.sku
-    assert_includes item.inspect, '@sku=SKU456'
-    assert_includes item.inspect, '@quantity=2'
+    assert_equal 2, item.quantity
     assert item.persisted?
   end
 
@@ -98,5 +97,18 @@ class OrderTest < ActiveSupport::TestCase
 
     assert item.reload
     assert_raises(ActiveRecord::RecordNotFound) { bogus.reload }
+  end
+
+  test 'dynamic attributes' do
+    @order.create_customizations(foo: 'bar')
+    customizations = @order.customizations
+    customizations.baz = 'bat'
+
+    assert_equal 'bar', customizations.foo
+    assert_equal 'bat', customizations.baz
+    assert customizations.save!
+    assert customizations.reload
+    assert_equal 'bat', customizations.baz
+    assert_equal 'bar', customizations.foo
   end
 end

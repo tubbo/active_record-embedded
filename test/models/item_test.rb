@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class Customizations
+class Hashable
   delegate :to_h, to: :@attributes
 
   def initialize(params = {})
@@ -34,12 +34,22 @@ class ItemTest < ActiveSupport::TestCase
   test 'convert types' do
     @item.quantity = '3'
     @item.price = 9
-    @item.customizations = Customizations.new(foo: 'bar')
+    @item.customizations = Hashable.new(foo: 'bar')
     @item.discounts = nil
 
     assert_equal 3, @item.quantity
     assert_equal 9.0, @item.price
     assert_kind_of Hash, @item.customizations
     assert_equal 'bar', @item.customizations[:foo]
+  end
+
+  test 'attributes are constrained to fields' do
+    assert_raises(NoMethodError) do
+      @item.foo = 'bar'
+    end
+
+    assert_raises(ActiveRecord::Embedded::Field::NotDefinedError) do
+      @item[:foo] = 'bar'
+    end
   end
 end

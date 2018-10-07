@@ -42,10 +42,24 @@ module ActiveRecord
         self.class.new(association: @association, model: @model, filters: @filters, sorts: sorts)
       end
 
+      # Find a given model in the database by its ID.
+      #
+      # @param [String] ID - Unique ID for the model you wish to find
+      # @return [ActiveRecord::Embedded::Model] or +nil+ if none can be found
       def find(id)
         params = model[association.name][id]
-        raise RecordNotFound, id unless params.present?
+        return unless params.present?
+
         build(params)
+      end
+
+      # Find a given model in the database by its ID. Throw an error
+      # when it cannot be found.
+      #
+      # @param [String] ID - Unique ID for the model you wish to find
+      # @return [ActiveRecord::Embedded::Model] or +nil+ if none can be found
+      def find!(id)
+        find(id) || raise(RecordNotFound, id)
       end
 
       private

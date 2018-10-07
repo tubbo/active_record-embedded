@@ -9,7 +9,15 @@ module ActiveRecord
         options.each { |key, value| instance_variable_set "@#{key}", value }
       end
 
+      def query(model)
+        raise NotImplementedError, "#{self.class.name}#find"
+      end
+
       def find(model)
+        raise NotImplementedError, "#{self.class.name}#find"
+      end
+
+      def assign(model, params)
         raise NotImplementedError, "#{self.class.name}#find"
       end
 

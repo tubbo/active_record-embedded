@@ -29,10 +29,8 @@ module ActiveRecord
         model = MiniTest::Mock.new
         params = { foo: 'bar' }
 
-        assert_raises(NotImplementedError) { @association.find(model) }
-        assert_raises(NotImplementedError) { @association.create(model, params) }
-        assert_raises(NotImplementedError) { @association.update(model, params) }
-        assert_raises(NotImplementedError) { @association.destroy(model) }
+        assert_raises(NotImplementedError) { @association.query(model) }
+        assert_raises(NotImplementedError) { @association.assign(model, params) }
       end
     end
   end
