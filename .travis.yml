@@ -19,3 +19,5 @@ deploy:
   on:
     tags: true
     repo: tubbo/active_record-embedded
+addons:
+  postgresql: '9.4'
