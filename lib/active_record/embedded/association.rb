@@ -13,7 +13,7 @@ module ActiveRecord
         raise NotImplementedError, "#{self.class.name}#find"
       end
 
-      def find(model)
+      def find(model, id)
         raise NotImplementedError, "#{self.class.name}#find"
       end
 
