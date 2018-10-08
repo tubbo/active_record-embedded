@@ -1,7 +1,9 @@
 module ActiveRecord
   module Embedded
-    # Base class for supported field types. Responsible for casting
-    # values.
+    # Base class for supported field types. Holds the logic for casting
+    # values and reading/writing attributes from the model.
+    #
+    # @abstract Subclass to define a custom field.
     class Field
       attr_reader :name, :default
 

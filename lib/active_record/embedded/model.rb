@@ -14,6 +14,8 @@ module ActiveRecord
         field :id, default: -> { SecureRandom.uuid }
 
         attr_reader :_parent, :_association, :attributes
+
+        alias_method :reload!, :reload
       end
 
       class_methods do
@@ -37,67 +39,93 @@ module ActiveRecord
         super(attributes)
       end
 
+      # Read an attribute from the model.
+      #
+      # @param [Symbol] key - Attribute name
       def [](key)
         attributes[key.to_sym]
       end
 
+      # Write an attribute to the model.
+      #
+      # @param [Symbol] key - Attribute name
+      # @param [Object] value - Value of this attribute
       def []=(key, value)
         attributes[key.to_sym] = cast(key, value)
       end
 
+      # Whether this model exists in the database.
       def persisted?
         id.present?
       end
 
-      def save
-        return false unless valid?
-        assign_associated_attributes!
+      # Whether this model does not exist in the database yet.
+      def new_record?
+        !persisted?
+      end
+
+      # Attempt to persist this model to the database.
+      #
+      # @return [Boolean]
+      def save(validate: true)
+        return false unless valid? if validate
+        persist!
         _parent.save
       end
 
+      # Attempt to persist this model to the database. Throw an error if
+      # unsuccessful.
+      #
+      # @return [Boolean]
+      # @throws [ActiveRecord::RecordNotSaved] if an error occurs
       def save!
-        raise ActiveRecord::RecordNotSaved, errors unless valid?
-        assign_associated_attributes!
+        raise RecordNotSaved, errors unless valid?
+        persist!
         _parent.save!
       end
 
+      # Assign attributes to this model from the database, overwriting
+      # what is stored in memory.
+      #
+      # @return [ActiveRecord::Embedded::Model] this object
       def reload
-        self.attributes = _attributes_from_database
+        self.attributes = _association.find(_parent, id).attributes
         self
       end
 
-      def inspect
-        params = attributes.map { |key, val| "@#{key}=#{val}" }.join(' ')
-        identifier = super.split(' ').first
-
-        "#{identifier} #{params}>"
-      end
-
+      # Cast attributes before assignment using +ActiveModel::AttributeMethods+.
       def assign_attributes(attrs = {})
         super cast_attributes(attrs)
       end
 
+      def update(params = {})
+        assign_attributes(params) and save
+      end
+
+      def update!(params = {})
+        assign_attributes(params) and save!
+      end
+
       private
 
-      def assign_associated_attributes!
+      # @private
+      def persist!
         self.id ||= SecureRandom.hex
         _association.update(_parent, attributes)
       end
 
+      # @private
       def cast_attributes(attrs = {})
         attrs.symbolize_keys.each_with_object({}) do |(attr, value), casted|
           casted[attr] = cast(attr, value)
         end
       end
 
+      # @private
       def cast(attribute, value)
         field = self.class.fields[attribute]
-        raise Field::NotDefinedError.new(attribute, self.class.name) if field.blank?
+        raise Field::NotDefinedError, attribute if field.blank?
         self.class.fields[attribute].cast(value)
-      end
-
-      def _attributes_from_database
-        _association.find(_parent, id).attributes
       end
     end
   end
