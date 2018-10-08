@@ -18,6 +18,12 @@ module ActiveRecord
         @model = TestModel.new(_parent: Foo.new(foo: 'bar'))
       end
 
+      test 'fields' do
+        TestModel.fields.keys.each do |key|
+          refute Item.fields.key?(key), "#{key} should not be in Item" unless key == :id
+        end
+      end
+
       test 'mass assign attributes' do
         @model.attributes = {
           name: 'Test',
