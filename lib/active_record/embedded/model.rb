@@ -1,13 +1,19 @@
 module ActiveRecord
   module Embedded
-    class Model
+    module Model
+      extend ActiveSupport::Concern
+
       include ActiveModel::Model
 
-      class_attribute :embed, :fields, :associations
-      self.fields ||= {}
-      self.associations ||= {}
+      included do
+        class_attribute :embed, :fields, :associations
+        self.fields ||= {}
+        self.associations ||= {}
+        field :id, default: -> { SecureRandom.uuid }
+        attr_reader :_parent, :_association, :attributes
+      end
 
-      class << self
+      class_methods do
         def embedded_in(name)
           self.embed = Association::Parent.new(name: name)
           define_method(name) { _parent }
@@ -19,10 +25,6 @@ module ActiveRecord
           define_method("#{name}=") { |value| self[name] = field.cast(value) }
         end
       end
-
-      field :id, default: -> { SecureRandom.uuid }
-
-      attr_reader :_parent, :_association, :attributes
 
       def initialize(_parent: nil, _association: nil, **attributes)
         @_association = _association

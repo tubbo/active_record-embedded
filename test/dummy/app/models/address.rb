@@ -1,4 +1,6 @@
-class Address < ActiveRecord::Embedded::Model
+class Address
+  include ActiveRecord::Embedded::Model
+
   embedded_in :order
 
   field :name

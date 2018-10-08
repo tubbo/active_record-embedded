@@ -1,7 +1,9 @@
-class Order::Customizations < ActiveRecord::Embedded::Model
+class Order::Customizations
+  include ActiveRecord::Embedded::Model
+  include ActiveRecord::Embedded::DynamicAttributes
+
   embedded_in :order
 
-  include ActiveRecord::Embedded::DynamicAttributes
 
   field :foo
 end

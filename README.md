@@ -25,7 +25,11 @@ $ bundle
 Create a new model in **app/models/item.rb**:
 
 ```ruby
-class Item < ActiveRecord::Embedded::Base
+class Item
+  include ActiveRecord::Embedded::Model
+
+  embedded_in :order
+
   field :sku
   field :quantity, type: Integer
   field :customizations, type: Hash
@@ -65,6 +69,7 @@ Then, in your model:
 ```ruby
 class Order < ApplicationRecord
   serialize :items, Hash
+
   embeds_many :items
 end
 ```
@@ -140,7 +145,11 @@ And an `Address` for modeling the embedded data:
 
 ```ruby
 # app/models/address.rb
-class Address < ActiveRecord::Embedded::Model
+class Address
+  include ActiveRecord::Embedded::Model
+
+  embedded_in :user
+
   field :name
   field :street_1
   field :street_2

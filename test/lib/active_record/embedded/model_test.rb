@@ -1,6 +1,8 @@
 require 'test_helper'
 
-class TestModel < ActiveRecord::Embedded::Model
+class TestModel
+  include ActiveRecord::Embedded::Model
+
   embedded_in :foo
 
   field :name

@@ -1,4 +1,6 @@
-class Item < ActiveRecord::Embedded::Model
+class Item
+  include ActiveRecord::Embedded::Model
+
   embedded_in :order
 
   field :sku
