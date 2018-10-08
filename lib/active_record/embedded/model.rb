@@ -7,9 +7,12 @@ module ActiveRecord
 
       included do
         class_attribute :embed, :fields, :associations
+
         self.fields ||= {}
         self.associations ||= {}
+
         field :id, default: -> { SecureRandom.uuid }
+
         attr_reader :_parent, :_association, :attributes
       end
 
