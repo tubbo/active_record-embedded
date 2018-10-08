@@ -13,13 +13,8 @@ module ActiveRecord
       def method_missing(method, value = nil, *_arguments)
         return super unless respond_to? method
         attribute = "#{method}".gsub('=', '').to_sym
-        type = if value.class.name.in? Field::TYPES
-                 value.class
-               elsif value.present?
-                 Hash
-               end
 
-        self.class.field attribute, type: type
+        self.class.field attribute, type: value.class
         self[attribute] = value
       end
 

@@ -1,6 +1,12 @@
 require "active_support/all"
 require "active_record/embedded/engine" if defined? Rails
 require "active_record/embedded/field"
+require "active_record/embedded/field/string"
+require "active_record/embedded/field/integer"
+require "active_record/embedded/field/float"
+require "active_record/embedded/field/hash"
+require "active_record/embedded/field/array"
+require "active_record/embedded/field/boolean"
 require "active_record/embedded/field/not_defined_error"
 require "active_record/embedded/field/type_error"
 require "active_record/embedded/association"
@@ -10,6 +16,9 @@ require "active_record/embedded/association/parent"
 require "active_record/embedded/relation"
 require "active_record/embedded/model"
 require "active_record/embedded/dynamic_attributes"
+
+# :nodoc:
+Boolean = ActiveRecord::Embedded::Field::Boolean
 
 module ActiveRecord
   # A library for storing schema-less data in a relational database,

@@ -22,8 +22,8 @@ module ActiveRecord
           define_method(name) { _parent }
         end
 
-        def field(name, **options)
-          self.fields[name] = field = Field.new(name: name, **options)
+        def field(name, type: String, default: nil)
+          self.fields[name] = field = Field.find(type).new(name, default)
           define_method(name) { field.cast(self[name]) }
           define_method("#{name}=") { |value| self[name] = field.cast(value) }
         end
