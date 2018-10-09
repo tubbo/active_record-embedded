@@ -122,13 +122,15 @@ module ActiveRecord
       end
 
       # @private
-      def cast(attribute, value)
+      def cast(attribute, value = nil)
+        return if value.nil?
         field = self.class.fields[attribute]
         raise Field::NotDefinedError, attribute if field.blank?
         field.cast(value)
       end
 
-      def coerce(attribute, value)
+      def coerce(attribute, value = nil)
+        return if value.nil?
         field = self.class.fields[attribute.to_sym]
         raise Field::NotDefinedError, attribute if field.blank?
         field.coerce(value)
