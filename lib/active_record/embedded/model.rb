@@ -6,7 +6,7 @@ module ActiveRecord
       include ActiveModel::Model
 
       included do
-        class_attribute :embed, :fields, :associations
+        class_attribute :parent_model, :fields, :associations
 
         self.fields ||= {}
         self.associations ||= {}
@@ -20,7 +20,7 @@ module ActiveRecord
 
       class_methods do
         def embedded_in(name)
-          self.embed = Association::Parent.new(name: name)
+          self.parent_model = Association::Parent.new(name: name)
           define_method(name) { _parent }
         end
 
@@ -33,7 +33,7 @@ module ActiveRecord
 
       def initialize(_parent: nil, _association: nil, **attributes)
         @_association = _association
-        @_parent = _parent || attributes[self.embed.name]
+        @_parent = _parent || attributes[parent_model.name]
         @attributes = attributes
 
         super(attributes)
