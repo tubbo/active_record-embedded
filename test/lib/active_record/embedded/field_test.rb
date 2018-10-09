@@ -33,7 +33,7 @@ module ActiveRecord
         bool = Field::Boolean.new(:foo, nil)
         params = { foo: 'bar' }
 
-        assert_nil field.cast(nil)
+        assert_raises(NotImplementedError) { field.cast(nil) }
         assert bool.cast(true)
         assert_equal 'foo', str.cast('foo')
         assert_equal 1, int.cast('1')

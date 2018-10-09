@@ -2,7 +2,7 @@ module ActiveRecord
   module Embedded
     class Field
       class Boolean < self
-        def cast!(value)
+        def cast(value)
           !!value
         end
       end

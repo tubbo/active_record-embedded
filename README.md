@@ -6,6 +6,8 @@
 
 Embed data in your ActiveRecord models.
 
+For more information, check out the [API Documentation][]
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -180,7 +182,67 @@ address = @user.create_address(
 address # => <Address ...>
 ```
 
-For more information, check out the [YARD Documentation][]
+### Field Types
+
+Fields must correspond to the standard JSON types, as defined by
+[RFC 7159][], the most recent standard specification as of this writing.
+
+These types are:
+
+- `object`, in Ruby represented as [Hash][]
+- `array`, represented in Ruby as an [Array][]
+- `number`, which can either be represented as an [Integer][] or [Float][]
+- `string`, represented in Ruby as a regular [String][] class
+- `boolean`, represented by the [true][] and [false][] literals in Ruby and...
+- `null`, which is represented in Ruby as [nil][]
+
+The above list represents a total catalog of all types that can be
+eventually stored into the database. Due to this library's rich
+typecasting system, however, custom types 
+
+#### Custom Types
+
+To create a custom type, define a subclass of
+`ActiveRecord::Embedded::Field` like so:
+
+```ruby
+module ActiveRecord
+  module Embedded
+    class Field
+      class Money < self
+        # This method is called to prepare the field for insertion into
+        # the database. It must return one of the standard JSON types.
+        def cast(value)
+          value.to_h
+        end
+
+        # When a value is being pulled out of the database, this is the
+        # method called to convert its value back into that of the
+        # higher-level field type.
+        def coerce(value = nil)
+          value.to_m
+        end
+      end
+    end
+  end
+end
+```
+
+(you may need to explicitly require it)
+
+By doing so, the `Money` type will be available in your models:
+
+```ruby
+class Item
+  include ActiveRecord::Embedded::Model
+
+  embedded_in :order
+
+  field :price, type: Money
+end
+```
+
+This causes 
 
 ## Contributing
 
@@ -212,5 +274,14 @@ The gem is available as open source under the terms of the [MIT License][].
 [report it]: https://github.com/tubbo/active-record_embedded/issues/new
 [MIT License]: https://opensource.org/licenses/MIT
 [code of conduct]: https://www.contributor-covenant.org/version/1/4/code-of-conduct
-[YARD Documentation]: https://www.rubydoc.info/github/tubbo/active-record_embedded/latest
+[API Documentation]: https://www.rubydoc.info/github/tubbo/active-record_embedded/latest
 [jsonb]: https://www.postgresql.org/docs/9.4/static/datatype-json.html
+[RFC 7159]: https://tools.ietf.org/html/rfc7159.html#section-3
+[Hash]: https://ruby-doc.org/core-2.5.1/Hash.html
+[Array]: http://ruby-doc.org/core-2.5.1/Array.html
+[Integer]: http://ruby-doc.org/core-2.5.1/Integer.html
+[Float]: http://ruby-doc.org/core-2.5.1/Float.html
+[String]: http://ruby-doc.org/core-2.5.1/String.html
+[true]: http://ruby-doc.org/core-2.5.1/TrueClass.html
+[false]: http://ruby-doc.org/core-2.5.1/FalseClass`.html
+[nil]: http://ruby-doc.org/core-2.5.1/NilClass.html

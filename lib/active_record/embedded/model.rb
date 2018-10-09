@@ -26,8 +26,8 @@ module ActiveRecord
 
         def field(name, type: String, default: nil)
           self.fields[name] = field = Field.find(type).new(name, default)
-          define_method(name) { field.cast(self[name]) }
-          define_method("#{name}=") { |value| self[name] = field.cast(value) }
+          define_method(name) { self[name] }
+          define_method("#{name}=") { |value| self[name] = value }
         end
       end
 
@@ -43,7 +43,7 @@ module ActiveRecord
       #
       # @param [Symbol] key - Attribute name
       def [](key)
-        attributes[key.to_sym]
+        coerce key, attributes[key.to_sym]
       end
 
       # Write an attribute to the model.
@@ -125,7 +125,13 @@ module ActiveRecord
       def cast(attribute, value)
         field = self.class.fields[attribute]
         raise Field::NotDefinedError, attribute if field.blank?
-        self.class.fields[attribute].cast(value)
+        field.cast(value)
+      end
+
+      def coerce(attribute, value)
+        field = self.class.fields[attribute.to_sym]
+        raise Field::NotDefinedError, attribute if field.blank?
+        field.coerce(value)
       end
     end
   end
