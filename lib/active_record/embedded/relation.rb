@@ -1,5 +1,9 @@
 module ActiveRecord
   module Embedded
+    # Collection of embedded models represented in a similar way
+    # as an +ActiveRecord::Relation+. Stores a query in memory
+    # which is applied when data is requested, (e.g. the +#each+
+    # method is called).
     class Relation
       include Enumerable
 
@@ -7,6 +11,10 @@ module ActiveRecord
 
       delegate :to_ary, :empty?, :last, to: :to_a
 
+      # @param [ActiveRecord::Embedded::Association] association
+      # @param [ActiveRecord::Base] model - Parent model for persistence
+      # @param [Hash] filters - Query filters to apply
+      # @param [Hash] sorts - Sort data to apply
       def initialize(association: , model: , filters: {}, sorts: {})
         @association = association
         @model = model
@@ -14,6 +22,9 @@ module ActiveRecord
         @filters = filters
       end
 
+      # Apply query and iterate over each model in the collection.
+      #
+      # @yields [ActiveRecord::Embedded::Model] for each datum
       def each
         data = model[association.name]
         data = apply_filters!(data)
@@ -22,24 +33,56 @@ module ActiveRecord
         data.each { |id, params| yield build(params.merge(id: id)) }
       end
 
+      # Instantiate a new model in this collection without persisting.
+      #
+      # @param [Hash] params - Attributes to build the model with.
+      # @return [ActiveRecord::Embedded::Model]
       def build(params = {})
         association.build(model, params)
       end
 
+      # Create a new model in this collection.
+      #
+      # @param [Hash] params - Attributes to build the model with.
+      # @return [ActiveRecord::Embedded::Model]
       def create(params = {})
         association.build(model, params).tap(&:save)
       end
 
+      # Create a new model in this collection, and throw an exception if
+      # the operation fails.
+      #
+      # @param [Hash] params - Attributes to build the model with.
+      # @return [ActiveRecord::Embedded::Model]
       def create!(params = {})
         association.build(model, params).tap(&:save!)
       end
 
+      # Filter this collection by the given set of key/value pairs.
+      #
+      # @param [Hash] filters - Key/value pairs to filter by
+      # @return [ActiveRecord::Embedded::Relation]
       def where(filters = {})
-        self.class.new(association: @association, model: @model, filters: filters, sorts: @sorts)
+        self.class.new(
+          association: @association,
+          model: @model,
+          filters: filters,
+          sorts: @sorts
+        )
       end
 
+      # Order this collection by the given set of keys. Values are
+      # the direction, +:desc+ or +:asc+.
+      #
+      # @param [Hash] sorts - Key/direction pairs to sort by
+      # @return [ActiveRecord::Embedded::Relation]
       def order(sorts = {})
-        self.class.new(association: @association, model: @model, filters: @filters, sorts: sorts)
+        self.class.new(
+          association: @association,
+          model: @model,
+          filters: @filters,
+          sorts: sorts
+        )
       end
 
       # Find a given model in the database by its ID.
@@ -64,6 +107,7 @@ module ActiveRecord
 
       private
 
+      # @private
       def apply_sorts!(data)
         sorts.each do |attribute, direction|
           data = data.sort do |(_, last_item), (_, next_item)|
@@ -78,6 +122,7 @@ module ActiveRecord
         data
       end
 
+      # @private
       def apply_filters!(data)
         return data if filters.empty?
 
