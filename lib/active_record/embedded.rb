@@ -1,5 +1,8 @@
+require "active_record"
 require "active_support/all"
+
 require "active_record/embedded/engine" if defined? Rails
+require "active_record/embedded/query"
 require "active_record/embedded/field"
 require "active_record/embedded/field/string"
 require "active_record/embedded/field/integer"
@@ -9,13 +12,20 @@ require "active_record/embedded/field/array"
 require "active_record/embedded/field/boolean"
 require "active_record/embedded/field/not_defined_error"
 require "active_record/embedded/field/type_error"
+
 require "active_record/embedded/association"
 require "active_record/embedded/association/many"
 require "active_record/embedded/association/one"
 require "active_record/embedded/association/parent"
+
 require "active_record/embedded/relation"
+
 require "active_record/embedded/model"
 require "active_record/embedded/dynamic_attributes"
+
+require "active_record/embedded/aggregation"
+require "active_record/embedded/aggregation/native"
+require "active_record/embedded/aggregation/postgresql"
 
 # :nodoc:
 Boolean = ActiveRecord::Embedded::Field::Boolean
@@ -36,6 +46,10 @@ module ActiveRecord
     included do
       class_attribute :embeds
       self.embeds = {}
+    end
+
+    def self.config
+      Rails.configuration.active_record_embedded
     end
 
     class_methods do

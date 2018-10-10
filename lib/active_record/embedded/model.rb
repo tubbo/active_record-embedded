@@ -19,8 +19,9 @@ module ActiveRecord
       end
 
       class_methods do
-        def embedded_in(name)
-          self.parent_model = Association::Parent.new(name: name)
+        def embedded_in(name, as: nil, **options)
+          as = model_name.param_key.pluralize if as.nil?
+          self.parent_model = Association::Parent.new(name: name, as: as, **options)
           define_method(name) { _parent }
         end
 
@@ -28,6 +29,13 @@ module ActiveRecord
           self.fields[name] = field = Field.find(type).new(name, default)
           define_method(name) { self[name] }
           define_method("#{name}=") { |value| self[name] = value }
+        end
+
+        def where(filters = {})
+          Aggregation.create(
+            model: self,
+            filters: filters
+          )
         end
       end
 
@@ -104,6 +112,11 @@ module ActiveRecord
 
       def update!(params = {})
         assign_attributes(params) and save!
+      end
+
+      def ==(other)
+        return false if id.blank?
+        id == other&.id
       end
 
       private
