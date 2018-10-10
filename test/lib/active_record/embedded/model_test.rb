@@ -21,8 +21,11 @@ module ActiveRecord
       end
 
       test 'fields' do
+        default_keys = %i[id created_at updated_at]
         TestModel.fields.keys.each do |key|
-          refute Item.fields.key?(key), "#{key} should not be in Item" unless key == :id
+          unless key.in? default_keys
+            refute Item.fields.key?(key), "#{key} should not be in Item"
+          end
         end
       end
 
@@ -54,7 +57,18 @@ module ActiveRecord
         assert item.valid?, item.errors.full_messages.to_sentence
         assert_equal 'SKU666', item.sku
         assert_equal 1, item.quantity
-        assert_nil item.price
+        assert_equal 0.0, item.price
+        assert_nil item.placed_at
+      end
+
+      test 'update timestamps when saved' do
+        order = orders(:one)
+        item = order.items.create(sku: 'SKU666', quantity: 1)
+        original_update_time = item.updated_at
+
+        sleep 1
+        assert item.update(quantity: 2)
+        refute_equal item.updated_at, original_update_time
       end
     end
   end

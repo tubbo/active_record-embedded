@@ -8,6 +8,7 @@ class Item
   field :price, type: Float, default: 0.0
   field :customizations, type: Hash, default: {}
   field :discounts, type: Array, default: []
+  field :placed_at, type: Time
 
   validates :quantity, presence: true
 end

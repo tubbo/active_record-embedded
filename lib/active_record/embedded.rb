@@ -10,6 +10,8 @@ require "active_record/embedded/field/float"
 require "active_record/embedded/field/hash"
 require "active_record/embedded/field/array"
 require "active_record/embedded/field/boolean"
+require "active_record/embedded/field/regexp"
+require "active_record/embedded/field/time"
 require "active_record/embedded/field/not_defined_error"
 require "active_record/embedded/field/type_error"
 

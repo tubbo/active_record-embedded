@@ -11,14 +11,28 @@ module ActiveRecord
 
       def initialize(name, default)
         @name = name
-        @default = default
+        @default = if default.respond_to? :call
+                     default
+                   else
+                     lambda { default }
+                   end
+      end
+
+      # Whether a default has been set
+      def default?
+        !@default.nil?
+      end
+
+      # Name of the method holding the default value.
+      def default_method_name
+        "__#{name}_default__"
       end
 
       # All type names, which are subclasses of this object.
       #
       # @return [Array<String>]
       def self.types
-        subclasses.map { |field| field.name.demodulize }
+        subclasses.map { |field| field.name.gsub(PREFIX, '') }
       end
 
       # Find a field object by its given type name.

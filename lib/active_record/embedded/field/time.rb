@@ -9,7 +9,7 @@ module ActiveRecord
       # Construct a +Time+ object from a numerical timestamp for
       # rendering.
       def coerce(value)
-        Time.at(value)
+        ::Time.at(value)
       end
     end
   end

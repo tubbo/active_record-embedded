@@ -12,6 +12,8 @@ module ActiveRecord
         self.associations ||= {}
 
         field :id, default: -> { SecureRandom.uuid }
+        field :created_at, type: Time, default: -> { Time.current }
+        field :updated_at, type: Time, default: -> { Time.current }
 
         attr_reader :_parent, :_association, :attributes
 
@@ -31,6 +33,7 @@ module ActiveRecord
           self.fields[name] = field = Field.find(type).new(name, default)
           define_method(name) { self[name] }
           define_method("#{name}=") { |value| self[name] = value }
+          define_method(field.default_method_name, field.default) if field.default?
         end
 
         # Filter items by a given set of parameters, in the form of
@@ -154,7 +157,20 @@ module ActiveRecord
 
       # @private
       def persist!
-        self.id ||= SecureRandom.hex
+        _create || _update
+      end
+
+      def _create
+        return false unless new_record?
+        self.id = SecureRandom.hex
+
+        _association.update(_parent, attributes)
+      end
+
+      def _update
+        return false unless persisted?
+        self.updated_at = Time.current
+
         _association.update(_parent, attributes)
       end
 
@@ -167,17 +183,19 @@ module ActiveRecord
 
       # @private
       def cast(attribute, value = nil)
-        return if value.nil?
         field = self.class.fields[attribute]
         raise Field::NotDefinedError, attribute if field.blank?
-        field.cast(value)
+        casted_value = field.cast(value) unless value.blank?
+        return public_send(field.default_method_name) if casted_value.blank?
+        casted_value
       end
 
       def coerce(attribute, value = nil)
-        return if value.nil?
         field = self.class.fields[attribute.to_sym]
         raise Field::NotDefinedError, attribute if field.blank?
-        field.coerce(value)
+        coerced_value = field.coerce(value) unless value.blank?
+        return public_send(field.default_method_name) if coerced_value.blank?
+        coerced_value
       end
     end
   end

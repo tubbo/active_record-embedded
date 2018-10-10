@@ -5,12 +5,18 @@ one:
     ef73c6be-c40f-4f2b-a8ae-2cac75c4b0f6:
       sku: SKU123
       quantity: 1
+      created_at: <%= Time.current %>
+      updated_at: <%= Time.current %>
     99b954d5-e426-4200-8aa8-9f506b5579cd:
       sku: SKU999
       quantity: 1
+      created_at: <%= Time.current %>
+      updated_at: <%= Time.current %>
     3b52ebfb-54b3-4e60-be69-6f0775587959:
       sku: SKU456
       quantity: 2
+      created_at: <%= 2.days.ago %>
+      updated_at: <%= 2.days.ago %>
 
 two:
   items:
