@@ -31,10 +31,39 @@ module ActiveRecord
           define_method("#{name}=") { |value| self[name] = value }
         end
 
+        # Filter items by a given set of parameters, in the form of
+        # +:key => "value"+.
+        #
+        # @param [Hash] filters - Filtering options
+        # @return [ActiveRecord::Embedded::Aggregation] Query Object
         def where(filters = {})
+          aggregate(filters: filters)
+        end
+
+        # Sort items by a given set of parameters, in the form of
+        # +:attribute => :direction+.
+        #
+        # @example Sort user addresses by creation date, from earliest to latest.
+        #   User::Address.order(created_at: :asc)
+        # @param [Hash] sorts - Sorting options
+        # @return [ActiveRecord::Embedded::Aggregation] Query Object
+        def order(sorts = {})
+          aggregate(sorts: sorts)
+        end
+
+        # Define a new aggregation query.
+        #
+        # @param [Hash] where - Filtering options
+        # @param [Hash] order - Sorting options
+        # @return [ActiveRecord::Embedded::Aggregation] Query Object
+        def aggregate(where: {}, order: {})
+          association = parent_model&.association
+
           Aggregation.create(
             model: self,
-            filters: filters
+            filters: where,
+            sorts: order,
+            association: association
           )
         end
       end

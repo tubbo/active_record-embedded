@@ -17,3 +17,6 @@ two:
     42b41c30-ab4e-4859-ab84-c1b3959c9e31:
       sku: SKU123
       quantity: 4
+    42b41c30-ab4e-4859-ab84-c1b3959c9e32:
+      sku: SKU456
+      quantity: 1

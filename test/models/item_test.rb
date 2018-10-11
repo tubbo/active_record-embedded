@@ -54,14 +54,21 @@ class ItemTest < ActiveSupport::TestCase
   end
 
   test 'query all items with native adapter' do
-    collection = Item.where(quantity: 1)
-    order_1 = orders(:one)
-    order_2 = orders(:one)
+    matching_item_from_order_1 = orders(:one).items.find_by(quantity: 1)
+    matching_item_from_order_2 = orders(:two).items.find_by(quantity: 1)
+    non_matching_item_from_order_1 = orders(:two).items.find_by(quantity: 2)
+    non_matching_item_from_order_2 = orders(:two).items.find_by(quantity: 4)
 
-    refute_empty collection
-    assert_includes collection, order_1.items.find_by(quantity: 1)
-    assert_includes collection, order_2.items.find_by(quantity: 1)
-    refute_includes collection, order_2.items.find_by(quantity: 2)
+    [
+      Item.where(quantity: 1).order(created_at: :desc),
+      Item.order(created_at: :desc).where(quantity: 1)
+    ].each do |collection|
+      refute_empty collection
+      assert_includes collection, matching_item_from_order_1
+      assert_includes collection, matching_item_from_order_2
+      refute_includes collection, non_matching_item_from_order_1
+      refute_includes collection, non_matching_item_from_order_2
+    end
   end
 
   test 'query all items with postgres adapter' do

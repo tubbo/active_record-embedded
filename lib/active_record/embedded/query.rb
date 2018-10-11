@@ -4,11 +4,23 @@ module ActiveRecord
       include Enumerable
 
       def association
-        raise NotImplementedError
+        raise NotImplementedError, "#{self.class.name}#association"
       end
 
       def each
-        raise NotImplementedError
+        raise NotImplementedError, "#{self.class.name}#each"
+      end
+
+      def model
+        raise NotImplementedError, "#{self.class.name}#model"
+      end
+
+      def filters
+        raise NotImplementedError, "#{self.class.name}#filters"
+      end
+
+      def sorts
+        raise NotImplementedError, "#{self.class.name}#sorts"
       end
 
       # Instantiate a new model in this collection without persisting.
@@ -42,10 +54,10 @@ module ActiveRecord
       # @return [ActiveRecord::Embedded::Relation]
       def where(filters = {})
         self.class.new(
-          association: @association,
-          model: @model,
+          association: association,
+          model: model,
           filters: filters,
-          sorts: @sorts
+          sorts: sorts
         )
       end
 
@@ -56,9 +68,9 @@ module ActiveRecord
       # @return [ActiveRecord::Embedded::Relation]
       def order(sorts = {})
         self.class.new(
-          association: @association,
-          model: @model,
-          filters: @filters,
+          association: association,
+          model: model,
+          filters: filters,
           sorts: sorts
         )
       end

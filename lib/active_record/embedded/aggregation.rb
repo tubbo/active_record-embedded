@@ -22,9 +22,10 @@ module ActiveRecord
         end
       end
 
-      def initialize(model:, filters: {})
+      def initialize(model:, filters: {}, sorts: {}, association: nil)
         @model = model
         @filters = filters
+        @association = association || parent_model&.association
       end
 
       def each
@@ -37,12 +38,14 @@ module ActiveRecord
 
       protected
 
-      delegate :parent_model, to: :@model
-      delegate :as, :association, to: :parent_model
-      delegate :build, to: :association
-
+      attr_reader :model
       attr_reader :filters
       attr_reader :sorts
+      attr_reader :association
+
+      delegate :parent_model, to: :@model
+      delegate :as, to: :parent_model
+      delegate :build, to: :association
 
       # @abstract Implement this method
       def results
