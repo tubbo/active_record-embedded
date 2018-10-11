@@ -59,6 +59,9 @@ class ItemTest < ActiveSupport::TestCase
     non_matching_item_from_order_1 = orders(:two).items.find_by(quantity: 2)
     non_matching_item_from_order_2 = orders(:two).items.find_by(quantity: 4)
 
+    assert Item.any?
+    assert_equal 5, Item.count
+
     [
       Item.where(quantity: 1).order(created_at: :desc),
       Item.order(created_at: :desc).where(quantity: 1)

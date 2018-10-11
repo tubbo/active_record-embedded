@@ -19,6 +19,8 @@ module ActiveRecord
       end
 
       class_methods do
+        delegate_missing_to :aggregate
+
         def embedded_in(name, as: nil, **options)
           as = model_name.param_key.pluralize if as.nil?
           self.parent_model = Association::Parent.new(name: name, as: as, **options)
@@ -37,7 +39,7 @@ module ActiveRecord
         # @param [Hash] filters - Filtering options
         # @return [ActiveRecord::Embedded::Aggregation] Query Object
         def where(filters = {})
-          aggregate(filters: filters)
+          aggregate(where: filters)
         end
 
         # Sort items by a given set of parameters, in the form of
@@ -48,7 +50,7 @@ module ActiveRecord
         # @param [Hash] sorts - Sorting options
         # @return [ActiveRecord::Embedded::Aggregation] Query Object
         def order(sorts = {})
-          aggregate(sorts: sorts)
+          aggregate(order: sorts)
         end
 
         # Define a new aggregation query.
