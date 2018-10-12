@@ -75,6 +75,7 @@ class ItemTest < ActiveSupport::TestCase
   end
 
   test 'query all items with postgres adapter' do
+    skip 'until we have indexes'
     @_original_adapter = Rails.configuration.active_record_embedded.adapter
     Rails.configuration.active_record_embedded.adapter = :postgresql
 
