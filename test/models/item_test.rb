@@ -82,21 +82,4 @@ class ItemTest < ActiveSupport::TestCase
       refute_includes collection, non_matching_item_from_order_2
     end
   end
-
-  test 'query all items with postgres adapter' do
-    skip 'until we have indexes'
-    @_original_adapter = Rails.configuration.active_record_embedded.adapter
-    Rails.configuration.active_record_embedded.adapter = :postgresql
-
-    collection = Item.where(quantity: 1)
-    order_1 = orders(:one)
-    order_2 = orders(:one)
-
-    refute_empty collection
-    assert_includes collection, order_1.items.find_by(quantity: 1)
-    assert_includes collection, order_2.items.find_by(quantity: 1)
-    refute_includes collection, order_2.items.find_by(quantity: 2)
-  ensure
-    Rails.configuration.active_record_embedded.adapter = @_original_adapter
-  end
 end
