@@ -21,6 +21,8 @@ module ActiveRecord
         alias_method :has_attribute?, :key?
         alias_method :read_attribute, :[]
         alias_method :write_attribute, :[]=
+
+        define_model_callbacks :validation, :save, :create, :update, :destroy, :initialize
       end
 
       class_methods do
@@ -81,11 +83,13 @@ module ActiveRecord
       end
 
       def initialize(_parent: nil, _association: nil, **attributes)
-        @_association = _association
         @_parent = _parent || attributes[parent_model.name]
+        @_association = _association
         @attributes = attributes
 
-        super(attributes)
+        run_callbacks :initialize do
+          super(attributes)
+        end
       end
 
       # Read an attribute from the model.
@@ -109,7 +113,7 @@ module ActiveRecord
 
       # Whether this model exists in the database.
       def persisted?
-        id.present?
+        attributes[:id].present?
       end
 
       # Whether this model does not exist in the database yet.
@@ -117,13 +121,18 @@ module ActiveRecord
         !persisted?
       end
 
+      def valid?(*)
+        run_callbacks(:validation) { super }
+      end
+
       # Attempt to persist this model to the database.
       #
       # @return [Boolean]
       def save(validate: true)
         return false unless valid? if validate
-        persist!
-        _parent.save
+        run_callbacks :save do
+          persist! && _parent.save
+        end
       end
 
       # Attempt to persist this model to the database. Throw an error if
@@ -133,8 +142,9 @@ module ActiveRecord
       # @throws [ActiveRecord::RecordNotSaved] if an error occurs
       def save!
         raise RecordNotSaved, errors unless valid?
-        persist!
-        _parent.save!
+        run_callbacks :save do
+          persist! && _parent.save!
+        end
       end
 
       # Assign attributes to this model from the database, overwriting
@@ -165,7 +175,9 @@ module ActiveRecord
       end
 
       def destroy
-        _association.destroy(_parent, id: id) && _parent.save
+        run_callbacks :destroy do
+          _association.destroy(_parent, id: id) && _parent.save
+        end
       end
 
       def destroy!
@@ -206,16 +218,20 @@ module ActiveRecord
 
       def _create
         return false unless new_record?
-        self.id = SecureRandom.hex
+        self.id = SecureRandom.uuid
 
-        _association.update(_parent, attributes)
+        run_callbacks :create do
+          _association.update(_parent, attributes)
+        end
       end
 
       def _update
         return false unless persisted?
         self.updated_at = Time.current
 
-        _association.update(_parent, attributes)
+        run_callbacks :update do
+          _association.update(_parent, attributes)
+        end
       end
 
       # @private

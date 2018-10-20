@@ -53,6 +53,15 @@ class ItemTest < ActiveSupport::TestCase
     end
   end
 
+  test 'run callbacks when created' do
+    order = orders(:one)
+    item = order.items.build(sku: 'SKU111', quantity: 2)
+    item.should_calculate_price = true
+
+    assert item.save
+    refute_equal 0.0, item.price
+  end
+
   test 'query all items with native adapter' do
     matching_item_from_order_1 = orders(:one).items.find_by(quantity: 1)
     matching_item_from_order_2 = orders(:two).items.find_by(quantity: 1)
