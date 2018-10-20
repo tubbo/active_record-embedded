@@ -4,7 +4,6 @@ module ActiveRecord
       class Native < self
         delegate :empty?, to: :results
 
-
         def query_for(model)
           model.public_send(as).where(@filters)
         end

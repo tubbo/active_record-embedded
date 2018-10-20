@@ -47,10 +47,8 @@ module ActiveRecord
       delegate :as, to: :parent_model
       delegate :build, to: :association
 
-      # @abstract Implement this method
-      def results
-        raise NotImplementedError, "#{self.class.name}#results"
-      end
+      # @!method results
+      #   @abstract Implement this method
 
       # Parent model class of the embedded model.
       #
