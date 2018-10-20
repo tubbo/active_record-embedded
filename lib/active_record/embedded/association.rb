@@ -29,7 +29,7 @@ module ActiveRecord
         raise NotImplementedError, "#{self.class.name}#update"
       end
 
-      def destroy(model)
+      def destroy(model, **params)
         raise NotImplementedError, "#{self.class.name}#destroy"
       end
 

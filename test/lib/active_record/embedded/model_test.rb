@@ -70,6 +70,18 @@ module ActiveRecord
         assert item.update(quantity: 2)
         refute_equal item.updated_at, original_update_time
       end
+
+      test 'destroy embedded model' do
+        order = orders(:one)
+        item = order.items.first
+        address = order.address
+
+        refute_nil item, 'item'
+        refute_nil address, 'address'
+        assert item.destroy!
+        assert address.destroy!
+        refute_includes order.reload.items, item
+      end
     end
   end
 end

@@ -14,6 +14,7 @@ module ActiveRecord
         # @return [ActiveRecord::Embedded::Model]
         def query(model)
           attributes = model[name]
+          return if attributes.nil?
 
           build(model, attributes)
         end
@@ -41,6 +42,11 @@ module ActiveRecord
 
         def create(model, params)
           build(model, params).tap(&:save)
+        end
+
+        def destroy(model, **_params)
+          model[name] = nil
+          model[name].blank?
         end
       end
     end

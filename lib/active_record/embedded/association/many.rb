@@ -53,6 +53,11 @@ module ActiveRecord
 
           model[name][id] = params
         end
+
+        def destroy(model, id: )
+          model[name].delete(id)
+          !model[name].key?(id)
+        end
       end
     end
   end

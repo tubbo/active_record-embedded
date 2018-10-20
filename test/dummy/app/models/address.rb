@@ -9,4 +9,5 @@ class Address
   field :city
   field :region
   field :country
+  field :postal_code
 end

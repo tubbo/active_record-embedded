@@ -18,6 +18,9 @@ module ActiveRecord
         attr_reader :_parent, :_association, :attributes
 
         alias_method :reload!, :reload
+        alias_method :has_attribute?, :key?
+        alias_method :read_attribute, :[]
+        alias_method :write_attribute, :[]=
       end
 
       class_methods do
@@ -71,6 +74,10 @@ module ActiveRecord
             association: association
           )
         end
+
+        def field_names
+          fields.keys
+        end
       end
 
       def initialize(_parent: nil, _association: nil, **attributes)
@@ -94,6 +101,10 @@ module ActiveRecord
       # @param [Object] value - Value of this attribute
       def []=(key, value)
         attributes[key.to_sym] = cast(key, value)
+      end
+
+      def key?(key)
+        attributes.key?(key.to_sym)
       end
 
       # Whether this model exists in the database.
@@ -153,7 +164,40 @@ module ActiveRecord
         id == other&.id
       end
 
+      def destroy
+        _association.destroy(_parent, id: id)
+      end
+
+      def destroy!
+        destroy || raise(RecordNotDestroyed, self)
+      end
+
+      def inspect
+        inspection = if @attributes
+                       self.class.field_names.collect { |name|
+                         if has_attribute?(name)
+                           "#{name}: #{attribute_for_inspect(name)}"
+                         end
+                       }.compact.join(", ")
+                     else
+                       "not initialized"
+                     end
+        "#<#{self.class} #{inspection}>"
+      end
+
       private
+
+      def attribute_for_inspect(attr_name)
+        value = read_attribute(attr_name)
+
+        if value.is_a?(String) && value.length > 50
+          "#{value[0, 50]}...".inspect
+        elsif value.is_a?(Date) || value.is_a?(Time)
+          %Q("#{value.to_s(:db)}")
+        else
+          value.inspect
+        end
+      end
 
       # @private
       def persist!

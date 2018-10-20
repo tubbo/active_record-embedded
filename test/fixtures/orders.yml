@@ -1,6 +1,15 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
+  address:
+    id: "a51584a1-c902-4dd4-b0b2-fcae10c4ffcb"
+    name: Lester Tester
+    street_1: '123 Fake Street'
+    street_2: 'Unit 1'
+    city: 'Fakeadelphia'
+    region: 'PA'
+    country: 'US'
+    postal_code: '12345-6789'
   items:
     ef73c6be-c40f-4f2b-a8ae-2cac75c4b0f6:
       sku: SKU123

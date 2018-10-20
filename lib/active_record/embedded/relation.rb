@@ -7,19 +7,21 @@ module ActiveRecord
     class Relation
       include Query
 
-      attr_reader :association, :model, :filters, :sorts
+      attr_reader :association, :model, :filters, :sorts, :limit_value, :start_value
 
-      delegate :to_ary, :empty?, :last, to: :to_a
+      delegate_missing_to :to_a
 
       # @param [ActiveRecord::Embedded::Association] association
       # @param [ActiveRecord::Base] model - Parent model for persistence
       # @param [Hash] filters - Query filters to apply
       # @param [Hash] sorts - Sort data to apply
-      def initialize(association: , model: , filters: {}, sorts: {})
+      def initialize(association: , model: , filters: {}, sorts: {}, limit: -1, start: 0)
         @association = association
         @model = model
         @sorts = sorts
         @filters = filters
+        @limit_value = limit
+        @start_value = start
       end
 
       # Apply query and iterate over each model in the collection.
@@ -31,6 +33,17 @@ module ActiveRecord
         data = apply_sorts!(data)
 
         data.each { |id, params| yield build(params.merge(id: id)) }
+      end
+
+      def inspect
+        entries = if limit_value == -1
+                    take(11).map!(&:inspect)
+                  else
+                    take([limit_value, 11].compact.min).map!(&:inspect)
+                  end
+        entries[10] = '...' if entries.size == 11
+
+        "#<#{self.class.name} [#{entries.join(', ')}]>"
       end
 
       private
