@@ -165,7 +165,7 @@ module ActiveRecord
       end
 
       def destroy
-        _association.destroy(_parent, id: id)
+        _association.destroy(_parent, id: id) && _parent.save
       end
 
       def destroy!
