@@ -28,6 +28,7 @@ require "active_record/embedded/relation"
 
 require "active_record/embedded/aggregation"
 require "active_record/embedded/aggregation/native"
+require "active_record/embedded/aggregation/postgresql"
 
 require "active_record/embedded/model"
 require "active_record/embedded/dynamic_attributes"
