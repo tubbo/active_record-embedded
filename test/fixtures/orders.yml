@@ -2,36 +2,72 @@
 
 one:
   address:
-    id: "a51584a1-c902-4dd4-b0b2-fcae10c4ffcb"
-    name: Lester Tester
-    street_1: '123 Fake Street'
-    street_2: 'Unit 1'
-    city: 'Fakeadelphia'
-    region: 'PA'
-    country: 'US'
-    postal_code: '12345-6789'
+    data:
+      id: "a51584a1-c902-4dd4-b0b2-fcae10c4ffcb"
+      name: Lester Tester
+      street_1: '123 Fake Street'
+      street_2: 'Unit 1'
+      city: 'Fakeadelphia'
+      region: 'PA'
+      country: 'US'
+      postal_code: '12345-6789'
   items:
-    ef73c6be-c40f-4f2b-a8ae-2cac75c4b0f6:
-      sku: SKU123
-      quantity: 1
-      created_at: <%= Time.current %>
-      updated_at: <%= Time.current %>
-    99b954d5-e426-4200-8aa8-9f506b5579cd:
-      sku: SKU999
-      quantity: 1
-      created_at: <%= Time.current %>
-      updated_at: <%= Time.current %>
-    3b52ebfb-54b3-4e60-be69-6f0775587959:
-      sku: SKU456
-      quantity: 2
-      created_at: <%= 2.days.ago %>
-      updated_at: <%= 2.days.ago %>
+    index:
+      id:
+        options:
+          unique: true
+        values:
+          - ef73c6be-c40f-4f2b-a8ae-2cac75c4b0f6
+          - 99b954d5-e426-4200-8aa8-9f506b5579cd
+          - 3b52ebfb-54b3-4e60-be69-6f0775587959
+      sku:
+        options:
+          unique: false
+        values:
+          - SKU999
+          - SKU456
+          - SKU123
+    data:
+      -
+        id: 99b954d5-e426-4200-8aa8-9f506b5579cd
+        sku: SKU123
+        quantity: 1
+        created_at: <%= Time.current %>
+        updated_at: <%= Time.current %>
+      -
+        id: 99b954d5-e426-4200-8aa8-9f506b5579cd
+        sku: SKU999
+        quantity: 1
+        created_at: <%= Time.current %>
+        updated_at: <%= Time.current %>
+      -
+        id: 3b52ebfb-54b3-4e60-be69-6f0775587959
+        sku: SKU456
+        quantity: 2
+        created_at: <%= 2.days.ago %>
+        updated_at: <%= 2.days.ago %>
 
 two:
   items:
-    42b41c30-ab4e-4859-ab84-c1b3959c9e31:
-      sku: SKU123
-      quantity: 4
-    42b41c30-ab4e-4859-ab84-c1b3959c9e32:
-      sku: SKU456
-      quantity: 1
+    index:
+      id:
+        options:
+          unique: true
+        values:
+          - 42b41c30-ab4e-4859-ab84-c1b3959c9e31
+          - 42b41c30-ab4e-4859-ab84-c1b3959c9e32
+      sku:
+        options:
+          unique: false
+        values:
+          - SKU456
+          - SKU123
+    data:
+      -
+        id: 42b41c30-ab4e-4859-ab84-c1b3959c9e31
+        sku: SKU123
+        quantity: 4
+      -
+        id: 42b41c30-ab4e-4859-ab84-c1b3959c9e32
+        sku: SKU456
+        quantity: 1
