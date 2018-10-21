@@ -1,7 +1,8 @@
 module ActiveRecord
   module Embedded
     class Field
-      class TypeError < ::TypeError
+      # Thrown when a configured field type cannot be handled as JSON.
+      class TypeError < Error
         def initialize(klass)
           type = klass.to_s.demodulize
           types = Field.types.to_sentence

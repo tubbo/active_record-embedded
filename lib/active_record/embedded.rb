@@ -2,6 +2,7 @@ require "active_record"
 require "active_support/all"
 
 require "active_record/embedded/engine" if defined? Rails
+require "active_record/embedded/error"
 require "active_record/embedded/query"
 require "active_record/embedded/field"
 require "active_record/embedded/field/string"
@@ -53,7 +54,10 @@ module ActiveRecord
     end
 
     def self.config
-      Rails.configuration.active_record_embedded
+      @config ||= ActiveSupport::Configurable::Configuration.new.tap do |c|
+        c.scan_tables = false
+        c.adapter = :native
+      end
     end
 
     class_methods do

@@ -8,17 +8,18 @@ module ActiveRecord
       include Query
 
       class << self
-        delegate :config, to: Embedded
-
         # Find an adapter for the given +config.adapter+
-        def find(id)
+        def find(id = :native)
           "ActiveRecord::Embedded::Aggregation::#{id.to_s.demodulize.classify}".constantize
+        rescue NameError
+          Rails.logger.debug("No aggregation found for adapter '#{id}'")
+          ActiveRecord::Embedded::Aggregation::Native
         end
 
         # Shorthand for defining a new aggregation with the correct
         # adapter.
         def create(**options)
-          find(config.adapter).new(**options)
+          find(Embedded.config.adapter).new(**options)
         end
       end
 

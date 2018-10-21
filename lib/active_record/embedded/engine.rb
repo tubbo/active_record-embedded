@@ -1,8 +1,12 @@
 module ActiveRecord
   module Embedded
     class Engine < ::Rails::Engine
-      config.active_record_embedded = ActiveSupport::OrderedOptions.new
-      config.active_record_embedded.adapter = :native
+      initializer 'active_record.embedded.adapter' do
+        db_config = Rails.configuration.database_configuration[Rails.env]
+        adapter = db_config['adapter']
+
+        Embedded.config.adapter = adapter.to_sym
+      end
     end
   end
 end

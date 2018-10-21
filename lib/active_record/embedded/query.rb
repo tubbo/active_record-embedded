@@ -76,11 +76,33 @@ module ActiveRecord
       end
 
       def find_by(params = {})
-        where(params).first
+        find_by_index(params) || where(params).first
       end
 
       def find_by!(params = {})
-        where(params).first || raise(RecordNotFound, params.to_sentence)
+        find_by(params) || raise(RecordNotFound, params.to_sentence)
+      end
+
+      def find_by_index(params = {})
+        name = if params.one?
+                 params.keys.first.to_s
+               else
+                 params.keys.join('_and_')
+               end
+        index = model[association.name]['index'][name]
+        if index.blank?
+          return unless Embedded.config.scan_tables
+          raise NoSolutionsError, name
+        end
+        values = model[association.name]['index'][name]['values']
+        position = params.values.map { |value| values.index(value) }.first
+        if position.blank?
+          return unless Embedded.config.scan_tables
+          raise NoSolutionsError, "#{name} (position: #{position})"
+        end
+        params = model[association.name]['data'][position]
+
+        build(params)
       end
 
       # Find a given model in the database by its ID.
@@ -88,10 +110,7 @@ module ActiveRecord
       # @param [String] ID - Unique ID for the model you wish to find
       # @return [ActiveRecord::Embedded::Model] or +nil+ if none can be found
       def find(id)
-        params = model[association.name]['data'].find { |item| item['id'] == id }
-        return unless params.present?
-
-        build(params)
+        find_by_index(id: id)
       end
 
       # Find a given model in the database by its ID. Throw an error

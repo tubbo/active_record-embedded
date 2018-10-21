@@ -16,6 +16,8 @@ module ActiveRecord
         field :created_at, type: Time, default: -> { Time.current }
         field :updated_at, type: Time, default: -> { Time.current }
 
+        index :id, unique: true
+
         attr_reader :_parent, :_association, :attributes
 
         alias_method :reload!, :reload
@@ -43,8 +45,8 @@ module ActiveRecord
         end
 
         # Create a new index on this model.
-        def index(query = {}, options = {})
-          self.indexes << Index.new(query: query, options: options)
+        def index(attributes, **options)
+          self.indexes << Index.new(attributes: attributes, **options)
         end
 
         # Filter items by a given set of parameters, in the form of

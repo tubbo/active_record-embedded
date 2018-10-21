@@ -16,6 +16,8 @@ class Item
 
   before_create :ensure_price, if: :should_calculate_price
 
+  index %i[sku], direction: :asc
+
   private
 
   def ensure_price

@@ -4,30 +4,41 @@ module ActiveRecord
     # advantage of faster iteration times over arrays than hashes in the
     # database.
     class Index
-      # @param [Hash] query - Query to index on, in the format +{ attribute: :direction }+
+      DEFAULT_DIRECTION = :asc
+
+      attr_reader :attributes, :direction, :unique
+
+      # @param [Array] attributes
+      # @param [Symbol] direction - Either +:desc+ or +:asc+.
       # @param [Boolean] unique - Error when index is already taken
-      def initialize(query: {}, options: {})
-        @query = query
-        @options = options
+      def initialize(attributes: , direction: DEFAULT_DIRECTION, unique: false)
+        @attributes = Array(attributes)
+        @direction = direction
+        @unique = unique
       end
 
-      # @return [Boolean] Whether this is a unique index.
-      def unique?
-        @unique
-      end
-
-      def values_for(data = [])
-        query.map do |attribute, direction|
-          items = data.map { |item| item[attribute] }
-          items.reverse! if direction == :desc
-        end
+      def name
+        return attributes.first.to_s if attributes.one?
+        attributes.join('_and_')
       end
 
       def build(data = [])
         {
-          options: options,
+          options: {
+            direction: direction,
+            unique: unique
+          },
           values: values_for(data)
         }
+      end
+
+      private
+
+      def values_for(data = [])
+        attributes.flat_map do |attribute|
+          data.map { |item| item[attribute] }
+              .tap { |items| items.reverse! if direction != DEFAULT_DIRECTION }
+        end
       end
     end
   end

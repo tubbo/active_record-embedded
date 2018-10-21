@@ -24,13 +24,27 @@ module ActiveRecord
         @start_value = start
       end
 
+      def query_name
+        if filters.one?
+          filters.keys.first.to_s
+        else
+          filters.keys.join('_and_')
+        end
+      end
+
       # Apply query and iterate over each model in the collection.
       #
       # @yields [ActiveRecord::Embedded::Model] for each datum
       def each
-        data = model[association.name]['data']
-        data = apply_filters!(data)
-        data = apply_sorts!(data)
+        if model[association.name]['index'].key?(query_name)
+          values = model[association.name]['index'][query_name]['values']
+          indexes = params.values.map { |value| values.index(value) }
+          data = indexes.map { |index| model[association.name]['data'][index] }
+        else
+          data = model[association.name]['data']
+          data = apply_filters!(data)
+          data = apply_sorts!(data)
+        end
 
         data.each { |params| yield build(params) }
       end

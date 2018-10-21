@@ -1,7 +1,7 @@
 module ActiveRecord
   module Embedded
     class Aggregation
-      class Native < self
+      class Native < Aggregation
         delegate :empty?, to: :results
 
         def query_for(model)
