@@ -87,9 +87,12 @@ module ActiveRecord
 
       def find_by_index(params = {})
         index = find_index(params)
+        return if index.blank?
+
         values = index['values']
         position = find_position(params, values)
         params = model[association.name]['data'][position] unless position.nil?
+
         return unless params.present?
 
         build(params)

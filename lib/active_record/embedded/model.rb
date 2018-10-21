@@ -182,6 +182,7 @@ module ActiveRecord
       #
       # @return [ActiveRecord::Embedded::Model] this object
       def reload
+        raise RecordNotFound unless persisted?
         self.attributes = _association.find(_parent, id).attributes
         self
       end

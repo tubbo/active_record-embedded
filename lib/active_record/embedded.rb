@@ -58,6 +58,13 @@ module ActiveRecord
       self.embeds = {}
     end
 
+    def self.config
+      @config ||= ActiveSupport::Configurable::Configuration.new.tap do |cfg|
+        cfg.scan_tables = true
+        cfg.adapter = 'native'
+      end
+    end
+
     class_methods do
       # @!method embeds_many(name, class_name: nil)
       #   Create a one-to-many relationship with an embedded model.
@@ -84,5 +91,7 @@ module ActiveRecord
         define_method("destroy_#{name}") { assoc.destroy(self) }
       end
     end
+
+    config.table_scan = true
   end
 end
