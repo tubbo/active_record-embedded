@@ -3,6 +3,10 @@
 module ActiveRecord
   module Embedded
     module Model
+      # Functionality for storing and casting attributes on an embedded
+      # model. Uses the configured +fields+ for the given model to
+      # cast/coerce attributes into and out of (respectively) the
+      # database.
       module Attributes
         extend ActiveSupport::Concern
 
@@ -12,12 +16,13 @@ module ActiveRecord
           alias_method :has_attribute?, :key?
           alias_method :read_attribute, :[]
           alias_method :write_attribute, :[]=
-          alias_method :reload!, :reload
         end
 
         # Read an attribute from the model.
         #
         # @param [Symbol] key - Attribute name
+        # @return [Object] Coerced value of this attribute, or +nil+ if
+        #                  it cannot be found.
         def [](key)
           value = attributes[key.to_sym]
 
@@ -37,13 +42,6 @@ module ActiveRecord
         # Whether the given attribute exists on this model.
         def key?(key)
           attributes.key?(key.to_sym)
-        end
-
-        # Run validations on this model.
-        #
-        # @return [Boolean] whether any errors occurred
-        def valid?(*)
-          run_callbacks(:validation) { super }
         end
 
         # @return [String]
