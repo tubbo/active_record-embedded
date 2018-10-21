@@ -3,11 +3,11 @@
 module ActiveRecord
   module Embedded
     module Model
+      # Aggregation logic for this model. Defines top-level query
+      # methods like +.where+ and +.order+ as well as an +.aggregate+
+      # method for defining your own aggregations.
       module Querying
         extend ActiveSupport::Concern
-
-        included do
-        end
 
         class_methods do
           delegate_missing_to :aggregate

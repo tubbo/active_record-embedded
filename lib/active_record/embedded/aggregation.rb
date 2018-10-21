@@ -9,46 +9,36 @@ module ActiveRecord
     class Aggregation
       include Query
 
-      class << self
-        # Find an adapter class for the given +config.adapter+. Fall
-        # back to the native adapter (e.g., iterating in Ruby) when none
-        # can be found.
-        #
-        # @param [Symbol] id - Current database adapter in use
-        # @return [Class]
-        def find(id = :native)
-          driver = id.to_s.demodulize.classify
-          "ActiveRecord::Embedded::Aggregation::#{driver}".constantize
-        rescue NameError
-          Rails.logger.debug("Database '#{id}' has no embedded adapter")
-          Rails.logger.debug('Falling back to native...')
-          ActiveRecord::Embedded::Aggregation::Native
-        end
+      delegate :parent_model, to: :model
+      delegate :as, to: :parent_model
+      delegate :build, to: :association
 
-        # Shorthand for defining a new aggregation with the correct
-        # adapter.
-        #
-        # @return [Aggregation]
-        def create(**options)
-          find(Embedded.config.adapter).new(**options)
-        end
+      def initialize(*_args)
+        super
+        @association ||= parent_model&.association
       end
 
-      # @param [Model] model - Subject of aggregation
-      # @param [Hash] filters - Key/value pairs to match results on
-      # @param [Hash] sorts - Key/value pairs to sort results with
-      # @param [Association] association - Metadata for embedded relationship
-      # @param [Integer] limit - Number of results to return
-      # @param [Integer] start - Starting point in collection
-      def initialize(
-        model:, filters: {}, sorts: {}, association: nil, limit: -1, start: 0
-      )
-        @model = model
-        @filters = filters
-        @sorts = sorts
-        @association = association || parent_model&.association
-        @limit_value = limit
-        @start_value = start
+      # Find an adapter class for the given +config.adapter+. Fall
+      # back to the native adapter (e.g., iterating in Ruby) when none
+      # can be found.
+      #
+      # @param [Symbol] id - Current database adapter in use
+      # @return [Class]
+      def self.find(id = :native)
+        driver = id.to_s.demodulize.classify
+        "ActiveRecord::Embedded::Aggregation::#{driver}".constantize
+      rescue NameError
+        Rails.logger.debug("Database '#{id}' has no embedded adapter")
+        Rails.logger.debug('Falling back to native...')
+        ActiveRecord::Embedded::Aggregation::Native
+      end
+
+      # Shorthand for defining a new aggregation with the correct
+      # adapter.
+      #
+      # @return [Aggregation]
+      def self.create(**options)
+        find(Embedded.config.adapter).new(**options)
       end
 
       # Instantiate the proper model objects for each search result in
@@ -86,17 +76,9 @@ module ActiveRecord
 
       protected
 
-      attr_reader :model
-      attr_reader :filters
-      attr_reader :sorts
-      attr_reader :association
-
-      delegate :parent_model, to: :@model
-      delegate :as, to: :parent_model
-      delegate :build, to: :association
-
       # Parent model class of the embedded model.
       #
+      # @private
       # @return [ActiveRecord::Base]
       def parent
         parent_model.embedded_class

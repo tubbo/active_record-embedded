@@ -2,27 +2,37 @@
 
 module ActiveRecord
   module Embedded
+    # Interface for querying embedded models. Implemented by the
+    # +ActiveRecord::Embedded::Relation+ and
+    # +ActiveRecord::Embedded::Aggregation+ objects, and provides the
+    # various SQL methods.
+    #
+    # @abstract Include this module to provide querying functionality
     module Query
+      extend ActiveSupport::Concern
+
       include Enumerable
 
-      def association
-        raise NotImplementedError, "#{self.class.name}#association"
+      included do
+        attr_reader :model, :filters, :sorts, :association,
+                    :limit_value, :start_value
       end
 
-      def each
-        raise NotImplementedError, "#{self.class.name}#each"
-      end
-
-      def model
-        raise NotImplementedError, "#{self.class.name}#model"
-      end
-
-      def filters
-        raise NotImplementedError, "#{self.class.name}#filters"
-      end
-
-      def sorts
-        raise NotImplementedError, "#{self.class.name}#sorts"
+      # @param [Model] model - Subject of aggregation
+      # @param [Hash] filters - Key/value pairs to match results on
+      # @param [Hash] sorts - Key/value pairs to sort results with
+      # @param [Association] association - Metadata for embedded relationship
+      # @param [Integer] limit - Number of results to return
+      # @param [Integer] start - Starting point in collection
+      def initialize(
+        model:, filters: {}, sorts: {}, association: nil, limit: -1, start: 0
+      )
+        @model = model
+        @filters = filters
+        @sorts = sorts
+        @association = association
+        @limit_value = limit
+        @start_value = start
       end
 
       # Instantiate a new model in this collection without persisting.
@@ -77,25 +87,26 @@ module ActiveRecord
         )
       end
 
+      # Find a model by the given params. Uses an index if possible,
+      # otherwise performs a full table scan unless +config.scan_tables+
+      # is set to false.
+      #
+      # @return [ActiveRecord::Embedded::Model] or +nil+ if nothing found
+      # @see ActiveRecord::Embedded::Query#find_by_index for more information
+      #      on what happens when indexes are used
       def find_by(params = {})
         find_by_index(params) || where(params).first
       end
 
+      # Find a model by the given params. Uses an index if possible,
+      # otherwise performs a full table scan unless +config.scan_tables+
+      # is set to false. Throws an error when no record can be found by
+      # any means.
+      #
+      # @return [ActiveRecord::Embedded::Model] if found
+      # @throws [ActiveRecord::RecordNotFound] when not found
       def find_by!(params = {})
         find_by(params) || raise(RecordNotFound, params.to_sentence)
-      end
-
-      def find_by_index(params = {})
-        index = find_index(params)
-        return if index.blank?
-
-        values = index['values']
-        position = find_position(params, values)
-        params = model[association.name]['data'][position] unless position.nil?
-
-        return unless params.present?
-
-        build(params)
       end
 
       # Find a given model in the database by its ID.
@@ -117,6 +128,26 @@ module ActiveRecord
 
       private
 
+      # Find a given model by its index.
+      #
+      # @private
+      def find_by_index(params = {})
+        index = find_index(params)
+        return if index.blank?
+
+        values = index['values']
+        position = find_position(params, values)
+        params = model[association.name]['data'][position] unless position.nil?
+
+        return unless params.present?
+
+        build(params)
+      end
+
+      # Find an index for the given query.
+      #
+      # @private
+      # @return [Hash] or +nil+ if nothing can be found.
       def find_index(params = {})
         name = if params.one?
                  params.keys.first.to_s
@@ -132,6 +163,11 @@ module ActiveRecord
         index
       end
 
+      # Find position of data in the array.
+      #
+      # @private
+      # @param [Hash] params
+      # @param [Array] index_values
       def find_position(params, index_values = [])
         params.values.map { |value| index_values.index(value) }.compact.first
       end

@@ -14,21 +14,10 @@ module ActiveRecord
 
       delegate_missing_to :to_a
 
-      # @param [ActiveRecord::Embedded::Association] association
-      # @param [ActiveRecord::Base] model - Parent model for persistence
-      # @param [Hash] filters - Query filters to apply
-      # @param [Hash] sorts - Sort data to apply
-      def initialize(
-        association:, model:, filters: {}, sorts: {}, limit: -1, start: 0
-      )
-        @association = association
-        @model = model
-        @sorts = sorts
-        @filters = filters
-        @limit_value = limit
-        @start_value = start
-      end
-
+      # Name of this query, if it matches an index then an index can be
+      # used.
+      #
+      # @return [String]
       def query_name
         if filters.one?
           filters.keys.first.to_s
@@ -54,6 +43,9 @@ module ActiveRecord
         data.each { |params| yield build(params) }
       end
 
+      # Return a subset of the results in this query, up to the first 10.
+      #
+      # @return [String] Human-readable representation of this object
       def inspect
         entries = if limit_value == -1
                     take(11).map!(&:inspect)
@@ -68,6 +60,8 @@ module ActiveRecord
       private
 
       # @private
+      # @param [Hash] data - Unsorted data
+      # @return [Hash] Sorted data
       def apply_sorts!(data)
         sorts.each do |attribute, direction|
           data = data.sort do |last_item, next_item|
@@ -83,6 +77,8 @@ module ActiveRecord
       end
 
       # @private
+      # @param [Hash] data - Unfiltered data
+      # @return [Hash] Filtered data
       def apply_filters!(data)
         return data if filters.empty?
 

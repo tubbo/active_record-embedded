@@ -3,6 +3,11 @@
 module ActiveRecord
   module Embedded
     class Aggregation
+      # Describe how to aggregate over embedded data across
+      # multiple parent models using Ruby's +Enumerable+ methods.
+      # Because this causes multiple iterations over an object, it's
+      # best to use a database-specific adapter such as +:postgresql+
+      # if you need aggregations.
       class Native < Aggregation
         delegate :empty?, to: :results
 

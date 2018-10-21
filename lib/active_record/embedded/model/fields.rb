@@ -3,6 +3,10 @@
 module ActiveRecord
   module Embedded
     module Model
+      # Define fields for an embedded model. Contains the top-level
+      # +fields+ object that contains all fields defined on the model.
+      # This module also configures some fields necessary for the model,
+      # such as timestamps and the +:id+.
       module Fields
         extend ActiveSupport::Concern
 

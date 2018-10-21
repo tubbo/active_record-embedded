@@ -2,6 +2,10 @@
 
 module ActiveRecord
   module Embedded
+    # Base class for all embedded associations, such as +embeds_one+ and
+    # +embeds_many+. Defines the interface that such associations must
+    # implement in order to be compatible with the rest of the
+    # +ActiveRecord::Embedded+ API.
     class Association
       attr_reader :name, :class_name
 

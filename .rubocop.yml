@@ -6,9 +6,6 @@ AllCops:
     - 'test/dummy/**/*'
     - 'test/test_helper.rb'
 
-Style/Documentation:
-  Enabled: false
-
 Lint/UnderscorePrefixedVariableName:
   Exclude:
     - 'lib/active_record/embedded/model.rb'

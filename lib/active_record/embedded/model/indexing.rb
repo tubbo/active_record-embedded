@@ -3,6 +3,12 @@
 module ActiveRecord
   module Embedded
     module Model
+      # Define indexes for an embedded model, which are used when
+      # querying models in the database. Indexes can make searching on
+      # known queries much faster, and are modeled after MongoDB/Mongoid
+      # indexes and how they work. Also instantiates an
+      # +ActiveRecord::Embedded::Index::Collection+ to contain all index
+      # configuration for the model.
       module Indexing
         extend ActiveSupport::Concern
 
