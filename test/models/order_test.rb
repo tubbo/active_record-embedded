@@ -25,6 +25,7 @@ class OrderTest < ActiveSupport::TestCase
   end
 
   test 'embeds one address' do
+    refute_nil @order.address
     assert_kind_of Address, @order.address
     assert_equal 'Lester Tester', @order.address.name
   end
@@ -35,8 +36,8 @@ class OrderTest < ActiveSupport::TestCase
 
     refute_empty order.items
     assert_kind_of Item, item
-    assert_equal 'SKU456', item.sku
-    assert_equal 2, item.quantity
+    assert_equal 'SKU123', item.sku
+    assert_equal 1, item.quantity
     assert item.persisted?
   end
 

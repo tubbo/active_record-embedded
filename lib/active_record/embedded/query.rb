@@ -88,7 +88,7 @@ module ActiveRecord
       # @param [String] ID - Unique ID for the model you wish to find
       # @return [ActiveRecord::Embedded::Model] or +nil+ if none can be found
       def find(id)
-        params = model[association.name][id]
+        params = model[association.name]['data'].find { |item| item['id'] == id }
         return unless params.present?
 
         build(params)

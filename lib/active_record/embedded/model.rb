@@ -162,11 +162,12 @@ module ActiveRecord
       end
 
       def update(params = {})
-        assign_attributes(params) and save
+        valid? && assign_attributes(params) && save
       end
 
       def update!(params = {})
-        assign_attributes(params) and save!
+        raise RecordNotValid, errors unless valid?
+        assign_attributes(params) && save!
       end
 
       def ==(other)

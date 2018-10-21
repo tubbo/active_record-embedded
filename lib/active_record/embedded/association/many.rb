@@ -35,9 +35,10 @@ module ActiveRecord
         # @param [Enumerable] items - Parameters to save
         # @return [Hash] params saved into the parent model.
         def assign(model, items)
-          model[name] = items.each_with_object({}) do |item, data|
+          model[name] ||= { 'data': [], 'index': {} }
+          model[name]['data'] = items.map do |item|
             embedded = build(model, item.to_h)
-            data[embedded.id] = embedded.attributes
+            embedded.attributes
           end
         end
 
@@ -47,16 +48,15 @@ module ActiveRecord
         # @param [Hash] item - Parameters to save
         # @return [Hash] params saved into the parent model.
         def update(model, item)
-          model[name] ||= {}
-          params = item.symbolize_keys
-          id = params[:id]
-
-          model[name][id] = params
+          model[name] ||= { 'data': [], 'index': {} }
+          model[name]['data'] << item.stringify_keys
+          true
         end
 
         def destroy(model, id: )
-          model[name].delete(id)
-          !model[name].key?(id)
+          model[name] ||= { 'data': [], 'index': {} }
+          model[name]['data'].reject! { |item| item['id'] == id }
+          true
         end
       end
     end

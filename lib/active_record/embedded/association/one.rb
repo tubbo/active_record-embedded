@@ -13,7 +13,7 @@ module ActiveRecord
         # @param [ActiveRecord::Base] model - Parent model
         # @return [ActiveRecord::Embedded::Model]
         def query(model)
-          attributes = model[name]
+          attributes = model[name]['data']
           return if attributes.nil?
 
           build(model, attributes)
@@ -34,8 +34,7 @@ module ActiveRecord
         # @param [ActiveRecord::Embedded::Model|Hash] embedded
         # @return [ActiveRecord::Embedded::Model]
         def assign(model, embedded)
-          model[name] = embedded.to_h
-
+          model[name] = { 'data': embedded.to_h }
           build(model, embedded)
         end
         alias_method :update, :assign
@@ -45,8 +44,8 @@ module ActiveRecord
         end
 
         def destroy(model, **_params)
-          model[name] = nil
-          model[name].blank?
+          model[name]['data'] = nil
+          model[name]['data'].blank?
         end
       end
     end

@@ -28,11 +28,11 @@ module ActiveRecord
       #
       # @yields [ActiveRecord::Embedded::Model] for each datum
       def each
-        data = model[association.name]
+        data = model[association.name]['data']
         data = apply_filters!(data)
         data = apply_sorts!(data)
 
-        data.each { |id, params| yield build(params.merge(id: id)) }
+        data.each { |params| yield build(params) }
       end
 
       def inspect
@@ -51,7 +51,7 @@ module ActiveRecord
       # @private
       def apply_sorts!(data)
         sorts.each do |attribute, direction|
-          data = data.sort do |(_, last_item), (_, next_item)|
+          data = data.sort do |last_item, next_item|
             if direction == :asc
               last_item[attribute.to_s] <=> next_item[attribute.to_s]
             else
@@ -67,7 +67,7 @@ module ActiveRecord
       def apply_filters!(data)
         return data if filters.empty?
 
-        data = data.select do |id, params|
+        data = data.select do |params|
           filters.any? do |filter, value|
             params[filter.to_s] == value
           end
