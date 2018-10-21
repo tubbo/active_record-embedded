@@ -114,4 +114,10 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 'bat', customizations.baz
     assert_equal 'bar', customizations.foo
   end
+
+  test 'prevent table scan' do
+    assert_raises ActiveRecord::Embedded::Query::NoSolutionsError do
+      orders(:one).items.find_by(quantity: 1)
+    end
+  end
 end

@@ -2,6 +2,7 @@
 
 module ActiveRecord
   module Embedded
+    # Mixin for embedded models.
     module Model
       extend ActiveSupport::Concern
 
@@ -27,7 +28,8 @@ module ActiveRecord
         alias_method :read_attribute, :[]
         alias_method :write_attribute, :[]=
 
-        define_model_callbacks :validation, :save, :create, :update, :destroy, :initialize
+        define_model_callbacks :validation, :save, :create,
+                               :update, :destroy, :initialize
       end
 
       class_methods do
@@ -35,7 +37,9 @@ module ActiveRecord
 
         def embedded_in(name, as: nil, **options)
           as = model_name.param_key.pluralize if as.nil?
-          self.parent_model = Association::Parent.new(name: name, as: as, **options)
+          self.parent_model = Association::Parent.new(
+            name: name, as: as, **options
+          )
           define_method(name) { _parent }
         end
 
@@ -48,7 +52,9 @@ module ActiveRecord
           self.fields[name] = field = Field.find(type).new(name, default)
           define_method(name) { self[name] }
           define_method("#{name}=") { |value| self[name] = value }
-          define_method(field.default_method_name, field.default) if field.default?
+          return unless field.default?
+
+          define_method(field.default_method_name, field.default)
         end
 
         # Create a new index on this model.
@@ -71,7 +77,7 @@ module ActiveRecord
         # Sort items by a given set of parameters, in the form of
         # +:attribute => :direction+.
         #
-        # @example Sort user addresses by creation date, from earliest to latest.
+        # @example Sort user addresses by creation date
         #   User::Address.order(created_at: :asc)
         # @param [Hash] sorts - Sorting options
         # @return [ActiveRecord::Embedded::Aggregation] Query Object
@@ -198,15 +204,6 @@ module ActiveRecord
         assign_attributes(params) && save!
       end
 
-      # Another record is equal to this model if its +#id+ is the same.
-      #
-      # @return [Boolean] whether both models' IDs are equal
-      def ==(other)
-        return false if id.blank?
-
-        id == other&.id
-      end
-
       # Delete this model.
       def destroy
         run_callbacks :destroy do
@@ -217,6 +214,15 @@ module ActiveRecord
       # Delete this model. Throw an error if unsuccessful.
       def destroy!
         destroy || raise(RecordNotDestroyed, self)
+      end
+
+      # Another record is equal to this model if its +#id+ is the same.
+      #
+      # @return [Boolean] whether both models' IDs are equal
+      def ==(other)
+        return false if id.blank?
+
+        id == other&.id
       end
 
       def inspect

@@ -12,7 +12,8 @@ module ActiveRecord
       class << self
         # Find an adapter for the given +config.adapter+
         def find(id = :native)
-          "ActiveRecord::Embedded::Aggregation::#{id.to_s.demodulize.classify}".constantize
+          driver = id.to_s.demodulize.classify
+          "ActiveRecord::Embedded::Aggregation::#{driver}".constantize
         rescue NameError
           Rails.logger.debug("No aggregation found for adapter '#{id}'")
           ActiveRecord::Embedded::Aggregation::Native
@@ -25,9 +26,12 @@ module ActiveRecord
         end
       end
 
-      def initialize(model:, filters: {}, sorts: {}, association: nil, limit: -1, start: 0)
+      def initialize(
+        model:, filters: {}, sorts: {}, association: nil, limit: -1, start: 0
+      )
         @model = model
         @filters = filters
+        @sorts = sorts
         @association = association || parent_model&.association
         @limit_value = limit
         @start_value = start

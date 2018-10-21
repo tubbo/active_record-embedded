@@ -34,7 +34,11 @@ module ActiveRecord
       end
 
       test 'build model' do
-        @association.expect(:build, Foo.new(foo: 'bar'), [@model, { foo: 'bar' }])
+        @association.expect(
+          :build,
+          Foo.new(foo: 'bar'),
+          [@model, { foo: 'bar' }]
+        )
         record = @query.build(foo: 'bar')
 
         assert_kind_of Foo, record

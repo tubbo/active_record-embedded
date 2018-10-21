@@ -86,25 +86,11 @@ module ActiveRecord
       end
 
       def find_by_index(params = {})
-        name = if params.one?
-                 params.keys.first.to_s
-               else
-                 params.keys.join('_and_')
-               end
-        index = model[association.name]['index'][name]
-        if index.blank?
-          return unless Embedded.config.scan_tables
-
-          raise NoSolutionsError, name
-        end
-        values = model[association.name]['index'][name]['values']
-        position = params.values.map { |value| values.index(value) }.first
-        if position.blank?
-          return unless Embedded.config.scan_tables
-
-          raise NoSolutionsError, "#{name} (position: #{position})"
-        end
-        params = model[association.name]['data'][position]
+        index = find_index(params)
+        values = index['values']
+        position = find_position(params, values)
+        params = model[association.name]['data'][position] unless position.nil?
+        return unless params.present?
 
         build(params)
       end
@@ -124,6 +110,24 @@ module ActiveRecord
       # @return [ActiveRecord::Embedded::Model] or +nil+ if none can be found
       def find!(id)
         find(id) || raise(RecordNotFound, id)
+      end
+
+      private
+
+      def find_index(params = {})
+        name = if params.one?
+                 params.keys.first.to_s
+               else
+                 params.keys.join('_and_')
+               end
+        index = model[association.name]['index'][name]
+        return if index.blank? && Embedded.config.scan_tables
+        raise NoSolutionsError, name if index.blank?
+        index
+      end
+
+      def find_position(params, index_values = [])
+        params.values.map { |value| index_values.index(value) }.compact.first
       end
     end
   end

@@ -9,7 +9,8 @@ module ActiveRecord
     class Relation
       include Query
 
-      attr_reader :association, :model, :filters, :sorts, :limit_value, :start_value
+      attr_reader :association, :model, :filters, :sorts,
+                  :limit_value, :start_value
 
       delegate_missing_to :to_a
 
@@ -17,7 +18,9 @@ module ActiveRecord
       # @param [ActiveRecord::Base] model - Parent model for persistence
       # @param [Hash] filters - Query filters to apply
       # @param [Hash] sorts - Sort data to apply
-      def initialize(association:, model:, filters: {}, sorts: {}, limit: -1, start: 0)
+      def initialize(
+        association:, model:, filters: {}, sorts: {}, limit: -1, start: 0
+      )
         @association = association
         @model = model
         @sorts = sorts
@@ -83,7 +86,7 @@ module ActiveRecord
       def apply_filters!(data)
         return data if filters.empty?
 
-        data = data.select do |params|
+        data.select do |params|
           filters.any? do |filter, value|
             params[filter.to_s] == value
           end

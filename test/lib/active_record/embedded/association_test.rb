@@ -35,9 +35,15 @@ module ActiveRecord
 
         assert_raises(NotImplementedError) { @association.query(model) }
         assert_raises(NotImplementedError) { @association.find(model, id) }
-        assert_raises(NotImplementedError) { @association.assign(model, params) }
-        assert_raises(NotImplementedError) { @association.create(model, params) }
-        assert_raises(NotImplementedError) { @association.update(model, params) }
+        assert_raises(NotImplementedError) do
+          @association.assign(model, params)
+        end
+        assert_raises(NotImplementedError) do
+          @association.create(model, params)
+        end
+        assert_raises(NotImplementedError) do
+          @association.update(model, params)
+        end
         assert_raises(NotImplementedError) { @association.destroy(model) }
         assert_raises(NotImplementedError) { @association.index(model, data) }
       end

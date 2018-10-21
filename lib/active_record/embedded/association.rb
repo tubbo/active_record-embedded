@@ -44,7 +44,11 @@ module ActiveRecord
       def build(model, value = {})
         return value if value.is_a? embedded_class
 
-        embedded_class.new(_parent: model, _association: self, **value.symbolize_keys)
+        embedded_class.new(
+          _parent: model,
+          _association: self,
+          **value.symbolize_keys
+        )
       end
 
       def embedded_class

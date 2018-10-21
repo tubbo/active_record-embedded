@@ -65,10 +65,10 @@ class ItemTest < ActiveSupport::TestCase
   end
 
   test 'query all items with native adapter' do
-    matching_item_from_order_1 = orders(:one).items.find_by(quantity: 1)
-    matching_item_from_order_2 = orders(:two).items.find_by(quantity: 1)
-    non_matching_item_from_order_1 = orders(:two).items.find_by(quantity: 2)
-    non_matching_item_from_order_2 = orders(:two).items.find_by(quantity: 4)
+    matching_item_from_order1 = orders(:one).items.find_by(quantity: 1)
+    matching_item_from_order2 = orders(:two).items.find_by(quantity: 1)
+    non_matching_item_from_order1 = orders(:two).items.find_by(quantity: 2)
+    non_matching_item_from_order2 = orders(:two).items.find_by(quantity: 4)
 
     assert Item.any?
     assert_equal 5, Item.count
@@ -78,10 +78,10 @@ class ItemTest < ActiveSupport::TestCase
       Item.order(created_at: :desc).where(quantity: 1)
     ].each do |collection|
       refute_empty collection
-      assert_includes collection, matching_item_from_order_1
-      assert_includes collection, matching_item_from_order_2
-      refute_includes collection, non_matching_item_from_order_1
-      refute_includes collection, non_matching_item_from_order_2
+      assert_includes collection, matching_item_from_order1
+      assert_includes collection, matching_item_from_order2
+      refute_includes collection, non_matching_item_from_order1
+      refute_includes collection, non_matching_item_from_order2
     end
   end
 
@@ -90,13 +90,13 @@ class ItemTest < ActiveSupport::TestCase
     ActiveRecord::Embedded.config.adapter = :postgresql
 
     collection = Item.where(quantity: 1)
-    order_1 = orders(:one)
-    order_2 = orders(:one)
+    order1 = orders(:one)
+    order2 = orders(:one)
 
     refute_empty collection
-    assert_includes collection, order_1.items.find_by(quantity: 1)
-    assert_includes collection, order_2.items.find_by(quantity: 1)
-    refute_includes collection, order_2.items.find_by(quantity: 2)
+    assert_includes collection, order1.items.find_by(quantity: 1)
+    assert_includes collection, order2.items.find_by(quantity: 1)
+    refute_includes collection, order2.items.find_by(quantity: 2)
   ensure
     ActiveRecord::Embedded.config.adapter = @_original_adapter
   end
