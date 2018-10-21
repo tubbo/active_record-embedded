@@ -99,20 +99,4 @@ class ItemTest < ActiveSupport::TestCase
   ensure
     ActiveRecord::Embedded.config.adapter = :native
   end
-
-  test 'query all items with mysql adapter' do
-    @_original_adapter = ActiveRecord::Embedded.config.adapter
-    ActiveRecord::Embedded.config.adapter = :mysql
-
-    collection = Item.where(quantity: 1)
-    order1 = orders(:one)
-    order2 = orders(:one)
-
-    refute_empty collection
-    assert_includes collection, order1.items.find_by(quantity: 1)
-    assert_includes collection, order2.items.find_by(quantity: 1)
-    refute_includes collection, order2.items.find_by(quantity: 2)
-  ensure
-    ActiveRecord::Embedded.config.adapter = @_original_adapter
-  end
 end

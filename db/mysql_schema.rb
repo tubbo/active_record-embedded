@@ -10,17 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_07_183745) do
+ActiveRecord::Schema.define(version: 2018_10_21_065852) do
 
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
-
-  create_table "orders", force: :cascade do |t|
-    t.jsonb "items"
+  create_table "shipments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "order_id"
+    t.json "items"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.jsonb "address"
-    t.jsonb "customizations"
+    t.index ["order_id"], name: "index_shipments_on_order_id"
   end
 
 end
