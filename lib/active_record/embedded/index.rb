@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveRecord
   module Embedded
     # Indexes allow for fast searching of embedded model data, taking
@@ -11,7 +13,7 @@ module ActiveRecord
       # @param [Array] attributes
       # @param [Symbol] direction - Either +:desc+ or +:asc+.
       # @param [Boolean] unique - Error when index is already taken
-      def initialize(attributes: , direction: DEFAULT_DIRECTION, unique: false)
+      def initialize(attributes:, direction: DEFAULT_DIRECTION, unique: false)
         @attributes = Array(attributes)
         @direction = direction
         @unique = unique
@@ -19,6 +21,7 @@ module ActiveRecord
 
       def name
         return attributes.first.to_s if attributes.one?
+
         attributes.join('_and_')
       end
 

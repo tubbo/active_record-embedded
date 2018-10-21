@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveRecord
   module Embedded
     class Association
@@ -59,7 +61,7 @@ module ActiveRecord
         # @param [ActiveRecord::Base] model - persistence model
         # @param [String] id - ID of element to destroy
         # @return [Boolean] whether the operation succeeded
-        def destroy(model, id: )
+        def destroy(model, id:)
           model[name] ||= { 'data': [], 'index': {} }
           model[name]['data'].reject! { |item| item['id'] == id }
           index(model)

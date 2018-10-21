@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 class TestModel
@@ -36,7 +38,7 @@ module ActiveRecord
           longitude: 72,
           amount: 3,
           data: { foo: 'bar', test: true },
-          tags: %w(foo bar baz)
+          tags: %w[foo bar baz]
         }
 
         assert_equal 'Test', @model.name

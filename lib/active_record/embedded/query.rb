@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveRecord
   module Embedded
     module Query
@@ -92,12 +94,14 @@ module ActiveRecord
         index = model[association.name]['index'][name]
         if index.blank?
           return unless Embedded.config.scan_tables
+
           raise NoSolutionsError, name
         end
         values = model[association.name]['index'][name]['values']
         position = params.values.map { |value| values.index(value) }.first
         if position.blank?
           return unless Embedded.config.scan_tables
+
           raise NoSolutionsError, "#{name} (position: #{position})"
         end
         params = model[association.name]['data'][position]

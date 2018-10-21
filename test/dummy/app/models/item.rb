@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Item
   include ActiveRecord::Embedded::Model
 
@@ -21,6 +23,6 @@ class Item
   private
 
   def ensure_price
-    self.price = (20 + Random.rand(11)) + 0.99
+    self.price = Random.rand(20..30) + 0.99
   end
 end

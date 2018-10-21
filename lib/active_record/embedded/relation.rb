@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveRecord
   module Embedded
     # Collection of embedded models represented in a similar way
@@ -15,7 +17,7 @@ module ActiveRecord
       # @param [ActiveRecord::Base] model - Parent model for persistence
       # @param [Hash] filters - Query filters to apply
       # @param [Hash] sorts - Sort data to apply
-      def initialize(association: , model: , filters: {}, sorts: {}, limit: -1, start: 0)
+      def initialize(association:, model:, filters: {}, sorts: {}, limit: -1, start: 0)
         @association = association
         @model = model
         @sorts = sorts

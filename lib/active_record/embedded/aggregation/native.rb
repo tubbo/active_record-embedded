@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveRecord
   module Embedded
     class Aggregation
@@ -10,9 +12,9 @@ module ActiveRecord
 
         def results
           @results ||= parent
-                        .all
-                        .map { |model| [model, query_for(model)] }
-                        .select { |model, items| items.any? }
+                       .all
+                       .map { |model| [model, query_for(model)] }
+                       .select { |_model, items| items.any? }
         end
       end
     end

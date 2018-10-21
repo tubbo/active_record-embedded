@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveRecord
   module Embedded
     # Base class for supported field types. Holds the logic for casting
@@ -14,7 +16,7 @@ module ActiveRecord
         @default = if default.respond_to? :call
                      default
                    else
-                     lambda { default }
+                     -> { default }
                    end
       end
 
@@ -51,7 +53,7 @@ module ActiveRecord
       # @return [Object] Casted value or +nil+ if value was nil.
       # @abstract Override this method to implement typecasting
       #           behavior.
-      def cast(value)
+      def cast(_value)
         raise NotImplementedError, "#{self.class.name}#cast"
       end
 

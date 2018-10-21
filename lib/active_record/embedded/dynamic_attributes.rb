@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveRecord
   module Embedded
     # Allow any attribute to be persisted to this embedded model.
@@ -12,7 +14,8 @@ module ActiveRecord
       # @return [Object] value persisted to the model.
       def method_missing(method, value = nil, *_arguments)
         return super unless respond_to? method
-        attribute = "#{method}".gsub('=', '').to_sym
+
+        attribute = method.to_s.delete('=').to_sym
 
         self.class.field attribute, type: value.class
         self[attribute] = value

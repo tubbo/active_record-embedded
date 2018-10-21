@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 module ActiveRecord
@@ -39,7 +41,7 @@ module ActiveRecord
         assert_equal 1, int.cast('1')
         assert_equal 1.0, float.cast(1)
         assert_equal params, hash.cast(params.to_a)
-        assert_equal %w(foo bar baz), arr.cast(%w(foo bar baz))
+        assert_equal %w[foo bar baz], arr.cast(%w[foo bar baz])
       end
     end
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveRecord
   module Embedded
     module Model
@@ -54,7 +56,7 @@ module ActiveRecord
         # @param [Array] attributes
         # @param [Hash] options
         def index(attributes, **options)
-          self.indexes << Index.new(attributes: attributes, **options)
+          indexes << Index.new(attributes: attributes, **options)
         end
 
         # Filter items by a given set of parameters, in the form of
@@ -149,7 +151,8 @@ module ActiveRecord
       #
       # @return [Boolean]
       def save(validate: true)
-        return false unless valid? if validate
+        return false if validate && !valid?
+
         run_callbacks :save do
           persist! && _parent.save
         end
@@ -162,6 +165,7 @@ module ActiveRecord
       # @throws [ActiveRecord::RecordNotSaved] if an error occurs
       def save!
         raise RecordNotSaved, errors unless valid?
+
         run_callbacks :save do
           persist! && _parent.save!
         end
@@ -190,6 +194,7 @@ module ActiveRecord
       # if it does not succeed.
       def update!(params = {})
         raise RecordNotValid, errors unless valid?
+
         assign_attributes(params) && save!
       end
 
@@ -198,6 +203,7 @@ module ActiveRecord
       # @return [Boolean] whether both models' IDs are equal
       def ==(other)
         return false if id.blank?
+
         id == other&.id
       end
 
@@ -215,13 +221,13 @@ module ActiveRecord
 
       def inspect
         inspection = if @attributes
-                       self.class.field_names.collect { |name|
+                       self.class.field_names.collect do |name|
                          if has_attribute?(name)
                            "#{name}: #{attribute_for_inspect(name)}"
                          end
-                       }.compact.join(", ")
+                       end.compact.join(', ')
                      else
-                       "not initialized"
+                       'not initialized'
                      end
         "#<#{self.class} #{inspection}>"
       end
@@ -234,7 +240,7 @@ module ActiveRecord
         if value.is_a?(String) && value.length > 50
           "#{value[0, 50]}...".inspect
         elsif value.is_a?(Date) || value.is_a?(Time)
-          %Q("#{value.to_s(:db)}")
+          %("#{value.to_s(:db)}")
         else
           value.inspect
         end
@@ -247,6 +253,7 @@ module ActiveRecord
 
       def _create
         return false unless new_record?
+
         self.id = SecureRandom.uuid
 
         run_callbacks :create do
@@ -256,6 +263,7 @@ module ActiveRecord
 
       def _update
         return false unless persisted?
+
         self.updated_at = Time.current
 
         run_callbacks :update do
@@ -274,16 +282,20 @@ module ActiveRecord
       def cast(attribute, value = nil)
         field = self.class.fields[attribute]
         raise Field::NotDefinedError, attribute if field.blank?
+
         casted_value = field.cast(value) unless value.blank?
         return public_send(field.default_method_name) if casted_value.blank?
+
         casted_value
       end
 
       def coerce(attribute, value = nil)
         field = self.class.fields[attribute.to_sym]
         raise Field::NotDefinedError, attribute if field.blank?
+
         coerced_value = field.coerce(value) unless value.blank?
         return public_send(field.default_method_name) if coerced_value.blank?
+
         coerced_value
       end
     end

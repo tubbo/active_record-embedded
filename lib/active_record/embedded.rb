@@ -1,37 +1,39 @@
-require "active_record"
-require "active_support/all"
+# frozen_string_literal: true
 
-require "active_record/embedded/engine" if defined? Rails
-require "active_record/embedded/error"
-require "active_record/embedded/query"
-require "active_record/embedded/field"
-require "active_record/embedded/field/string"
-require "active_record/embedded/field/integer"
-require "active_record/embedded/field/float"
-require "active_record/embedded/field/hash"
-require "active_record/embedded/field/array"
-require "active_record/embedded/field/boolean"
-require "active_record/embedded/field/regexp"
-require "active_record/embedded/field/time"
-require "active_record/embedded/field/not_defined_error"
-require "active_record/embedded/field/type_error"
+require 'active_record'
+require 'active_support/all'
 
-require "active_record/embedded/index"
-require "active_record/embedded/index/collection"
+require 'active_record/embedded/engine' if defined? Rails
+require 'active_record/embedded/error'
+require 'active_record/embedded/query'
+require 'active_record/embedded/field'
+require 'active_record/embedded/field/string'
+require 'active_record/embedded/field/integer'
+require 'active_record/embedded/field/float'
+require 'active_record/embedded/field/hash'
+require 'active_record/embedded/field/array'
+require 'active_record/embedded/field/boolean'
+require 'active_record/embedded/field/regexp'
+require 'active_record/embedded/field/time'
+require 'active_record/embedded/field/not_defined_error'
+require 'active_record/embedded/field/type_error'
 
-require "active_record/embedded/association"
-require "active_record/embedded/association/many"
-require "active_record/embedded/association/one"
-require "active_record/embedded/association/parent"
+require 'active_record/embedded/index'
+require 'active_record/embedded/index/collection'
 
-require "active_record/embedded/relation"
+require 'active_record/embedded/association'
+require 'active_record/embedded/association/many'
+require 'active_record/embedded/association/one'
+require 'active_record/embedded/association/parent'
 
-require "active_record/embedded/aggregation"
-require "active_record/embedded/aggregation/native"
-require "active_record/embedded/aggregation/postgresql"
+require 'active_record/embedded/relation'
 
-require "active_record/embedded/model"
-require "active_record/embedded/dynamic_attributes"
+require 'active_record/embedded/aggregation'
+require 'active_record/embedded/aggregation/native'
+require 'active_record/embedded/aggregation/postgresql'
+
+require 'active_record/embedded/model'
+require 'active_record/embedded/dynamic_attributes'
 
 # :nodoc:
 Boolean = ActiveRecord::Embedded::Field::Boolean

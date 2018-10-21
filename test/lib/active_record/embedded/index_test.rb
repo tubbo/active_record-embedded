@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 module ActiveRecord
@@ -36,7 +38,7 @@ module ActiveRecord
 
         assert index[:options][:unique]
         assert_equal Index::DEFAULT_DIRECTION, index[:options][:direction]
-        assert_equal %w(SKU1 SKU2), index[:values]
+        assert_equal %w[SKU1 SKU2], index[:values]
       end
     end
   end

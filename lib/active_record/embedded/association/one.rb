@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveRecord
   module Embedded
     class Association
@@ -37,7 +39,7 @@ module ActiveRecord
           model[name] = { 'data': embedded.to_h }
           build(model, embedded)
         end
-        alias_method :update, :assign
+        alias update assign
 
         def create(model, params)
           build(model, params).tap(&:save)
@@ -48,7 +50,7 @@ module ActiveRecord
           model[name]['data'].blank?
         end
 
-        def index(model, indexes, data = [])
+        def index(_model, _indexes, _data = [])
           true
         end
       end
