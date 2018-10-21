@@ -30,7 +30,9 @@ module ActiveRecord
           # @param [Object|Proc] default (optional) - Default value
           def field(name, type: String, default: nil)
             fields[name] = field = Field.find(type).new(name, default)
-            define_method(name) { self[name] }
+            define_method(name) do
+              self[name] || public_send(field.default_method_name)
+            end
             define_method("#{name}=") { |value| self[name] = value }
             return unless field.default?
 
