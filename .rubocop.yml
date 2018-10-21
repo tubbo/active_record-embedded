@@ -43,3 +43,7 @@ Naming/UncommunicativeMethodParamName:
 Style/DoubleNegation:
   Exclude:
     - 'lib/active_record/embedded/field/boolean.rb'
+
+Lint/UnusedMethodArgument:
+  Exclude:
+    - 'lib/active_record/embedded/field.rb'

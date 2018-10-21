@@ -53,7 +53,7 @@ module ActiveRecord
       # @return [Object] Casted value or +nil+ if value was nil.
       # @abstract Override this method to implement typecasting
       #           behavior.
-      def cast(_value)
+      def cast(value)
         raise NotImplementedError, "#{self.class.name}#cast"
       end
 

@@ -12,4 +12,5 @@ class Address
   field :region
   field :country
   field :postal_code
+  field :postal_code_validator, type: Regexp
 end

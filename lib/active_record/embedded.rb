@@ -88,6 +88,7 @@ module ActiveRecord
         define_method(name) { assoc.query(self) }
         define_method("#{name}=") { |value| assoc.assign(self, value) }
         define_method("create_#{name}") { |value| assoc.create(self, value) }
+        define_method("build_#{name}") { |value| assoc.build(self, value) }
         define_method("destroy_#{name}") { assoc.destroy(self) }
       end
     end

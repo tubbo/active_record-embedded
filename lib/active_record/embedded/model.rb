@@ -120,7 +120,9 @@ module ActiveRecord
       #
       # @param [Symbol] key - Attribute name
       def [](key)
-        coerce key, attributes[key.to_sym]
+        value = attributes[key.to_sym]
+        return if value.nil?
+        coerce(key, value)
       end
 
       # Write an attribute to the model.

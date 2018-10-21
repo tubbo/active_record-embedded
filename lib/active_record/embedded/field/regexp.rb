@@ -3,23 +3,26 @@
 module ActiveRecord
   module Embedded
     class Field
-      class RegExp < Field
-        # Convert regex into a hash of its pattern and options for
-        # persistence.
+      # Store a regular expression pattern as an object field in the
+      # database.
+      class Regexp < Field
         def cast(value)
+          return value if value.is_a? ::Hash
+
           {
             '$pattern' => value.source,
             '$options' => value.options
           }
         end
 
-        # Instantiate +Regexp+ object with +$pattern+ and +$options+ from
-        # the hash value.
+        # read from the database
         def coerce(value)
+          return value if value.is_a? ::Regexp
+
           pattern = value['$pattern']
           options = value['$options']
 
-          Regexp.new(pattern, options)
+          ::Regexp.new(pattern, options)
         end
       end
     end
