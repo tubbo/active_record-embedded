@@ -37,6 +37,11 @@ module ActiveRecord
           define_method(name) { _parent }
         end
 
+        # Define an embedded field.
+        #
+        # @param [Symbol] name - Name of the field
+        # @param [Class] type - Class of the field type
+        # @param [Object|Proc] default (optional) - Default value
         def field(name, type: String, default: nil)
           self.fields[name] = field = Field.find(type).new(name, default)
           define_method(name) { self[name] }
@@ -45,6 +50,9 @@ module ActiveRecord
         end
 
         # Create a new index on this model.
+        #
+        # @param [Array] attributes
+        # @param [Hash] options
         def index(attributes, **options)
           self.indexes << Index.new(attributes: attributes, **options)
         end
@@ -115,6 +123,7 @@ module ActiveRecord
         attributes[key.to_sym] = cast(key, value)
       end
 
+      # Whether the given attribute exists on this model.
       def key?(key)
         attributes.key?(key.to_sym)
       end
@@ -129,6 +138,9 @@ module ActiveRecord
         !persisted?
       end
 
+      # Run validations on this model.
+      #
+      # @return [Boolean] whether any errors occurred
       def valid?(*)
         run_callbacks(:validation) { super }
       end
@@ -169,26 +181,34 @@ module ActiveRecord
         super cast_attributes(attrs)
       end
 
+      # Mass-assign parameters to the data on this model.
       def update(params = {})
         valid? && assign_attributes(params) && save
       end
 
+      # Mass-assign parameters to the data on this model. Throw an error
+      # if it does not succeed.
       def update!(params = {})
         raise RecordNotValid, errors unless valid?
         assign_attributes(params) && save!
       end
 
+      # Another record is equal to this model if its +#id+ is the same.
+      #
+      # @return [Boolean] whether both models' IDs are equal
       def ==(other)
         return false if id.blank?
         id == other&.id
       end
 
+      # Delete this model.
       def destroy
         run_callbacks :destroy do
           _association.destroy(_parent, id: id) && _parent.save
         end
       end
 
+      # Delete this model. Throw an error if unsuccessful.
       def destroy!
         destroy || raise(RecordNotDestroyed, self)
       end

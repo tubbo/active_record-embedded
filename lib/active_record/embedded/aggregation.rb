@@ -23,10 +23,12 @@ module ActiveRecord
         end
       end
 
-      def initialize(model:, filters: {}, sorts: {}, association: nil)
+      def initialize(model:, filters: {}, sorts: {}, association: nil, limit: -1, start: 0)
         @model = model
         @filters = filters
         @association = association || parent_model&.association
+        @limit_value = limit
+        @start_value = start
       end
 
       def each
@@ -35,6 +37,21 @@ module ActiveRecord
             yield build(model, item)
           end
         end
+      end
+
+      def results
+        raise NotImplementedError, "#{self.class.name}#results"
+      end
+
+      def inspect
+        entries = if @limit_value == -1
+                    take(11).map!(&:inspect)
+                  else
+                    take([@limit_value, 11].compact.min).map!(&:inspect)
+                  end
+        entries[10] = '...' if entries.size == 11
+
+        "#<#{self.class.name} [#{entries.join(', ')}]>"
       end
 
       protected
@@ -47,9 +64,6 @@ module ActiveRecord
       delegate :parent_model, to: :@model
       delegate :as, to: :parent_model
       delegate :build, to: :association
-
-      # @!method results
-      #   @abstract Implement this method
 
       # Parent model class of the embedded model.
       #

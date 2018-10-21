@@ -84,8 +84,8 @@ class ItemTest < ActiveSupport::TestCase
   end
 
   test 'query all items with postgres adapter' do
-    @_original_adapter = Rails.configuration.active_record_embedded.adapter
-    Rails.configuration.active_record_embedded.adapter = :postgresql
+    @_original_adapter = ActiveRecord::Embedded.config.adapter
+    ActiveRecord::Embedded.config.adapter = :postgresql
 
     collection = Item.where(quantity: 1)
     order_1 = orders(:one)
@@ -96,6 +96,6 @@ class ItemTest < ActiveSupport::TestCase
     assert_includes collection, order_2.items.find_by(quantity: 1)
     refute_includes collection, order_2.items.find_by(quantity: 2)
   ensure
-    Rails.configuration.active_record_embedded.adapter = @_original_adapter
+    ActiveRecord::Embedded.config.adapter = @_original_adapter
   end
 end

@@ -1,23 +1,18 @@
 module ActiveRecord
   module Embedded
     class Aggregation
-      class Postgresql < self
+      class Postgresql < Native
         delegate :any?, :empty?, to: :results
 
-        protected
-
         def results
-          criteria = parent.unscoped
-          filters.each do |filter, value|
-            criteria = criteria.where(query(filter), value)
-          end
-          criteria
+          parent.where("#{as} @> ?", params)
+                .map { |model| [model, query_for(model)] }
         end
 
         private
 
-        def query(filter)
-          "#{as}->'#{filter}' = ?"
+        def params
+          { data: [filters] }.to_json
         end
       end
     end
