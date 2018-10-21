@@ -121,8 +121,11 @@ module ActiveRecord
                  params.keys.join('_and_')
                end
         index = model[association.name]['index'][name]
+
         return if index.blank? && Embedded.config.scan_tables
+
         raise NoSolutionsError, name if index.blank?
+
         index
       end
 
