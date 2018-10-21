@@ -9,9 +9,6 @@ module ActiveRecord
     class Relation
       include Query
 
-      attr_reader :association, :model, :filters, :sorts,
-                  :limit_value, :start_value
-
       delegate_missing_to :to_a
 
       # Name of this query, if it matches an index then an index can be
