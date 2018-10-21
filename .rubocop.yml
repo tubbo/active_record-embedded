@@ -24,21 +24,12 @@ Metrics/BlockLength:
     - refine
   Max: 36
 
-# Metrics/MethodLength:
-#   CountComments: false
-#   Max: 18
-
-Metrics/ModuleLength:
-  CountComments: false
-  Exclude:
-    - 'lib/active_record/embedded/model.rb'
-
 Metrics/ParameterLists:
   Max: 6
 
 Naming/UncommunicativeMethodParamName:
   Exclude:
-    - 'lib/active_record/embedded/model.rb'
+    - 'lib/active_record/embedded/model/storage.rb'
 
 Style/DoubleNegation:
   Exclude:

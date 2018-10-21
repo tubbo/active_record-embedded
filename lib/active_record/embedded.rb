@@ -33,7 +33,14 @@ require 'active_record/embedded/aggregation'
 require 'active_record/embedded/aggregation/native'
 require 'active_record/embedded/aggregation/postgresql'
 
+require 'active_record/embedded/model/attributes'
+require 'active_record/embedded/model/persistence'
+require 'active_record/embedded/model/fields'
+require 'active_record/embedded/model/indexing'
+require 'active_record/embedded/model/querying'
+require 'active_record/embedded/model/storage'
 require 'active_record/embedded/model'
+
 require 'active_record/embedded/dynamic_attributes'
 
 # :nodoc:

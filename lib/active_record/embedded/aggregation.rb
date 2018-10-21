@@ -10,22 +10,36 @@ module ActiveRecord
       include Query
 
       class << self
-        # Find an adapter for the given +config.adapter+
+        # Find an adapter class for the given +config.adapter+. Fall
+        # back to the native adapter (e.g., iterating in Ruby) when none
+        # can be found.
+        #
+        # @param [Symbol] id - Current database adapter in use
+        # @return [Class]
         def find(id = :native)
           driver = id.to_s.demodulize.classify
           "ActiveRecord::Embedded::Aggregation::#{driver}".constantize
         rescue NameError
-          Rails.logger.debug("No aggregation found for adapter '#{id}'")
+          Rails.logger.debug("Database '#{id}' has no embedded adapter")
+          Rails.logger.debug('Falling back to native...')
           ActiveRecord::Embedded::Aggregation::Native
         end
 
         # Shorthand for defining a new aggregation with the correct
         # adapter.
+        #
+        # @return [Aggregation]
         def create(**options)
           find(Embedded.config.adapter).new(**options)
         end
       end
 
+      # @param [Model] model - Subject of aggregation
+      # @param [Hash] filters - Key/value pairs to match results on
+      # @param [Hash] sorts - Key/value pairs to sort results with
+      # @param [Association] association - Metadata for embedded relationship
+      # @param [Integer] limit - Number of results to return
+      # @param [Integer] start - Starting point in collection
       def initialize(
         model:, filters: {}, sorts: {}, association: nil, limit: -1, start: 0
       )
@@ -37,6 +51,11 @@ module ActiveRecord
         @start_value = start
       end
 
+      # Instantiate the proper model objects for each search result in
+      # the query, populating said object with the state of its parent
+      # model/association as well.
+      #
+      # @yield [ActiveRecord::Embedded::Model]
       def each
         results.each do |model, items|
           items.each do |item|
@@ -45,6 +64,11 @@ module ActiveRecord
         end
       end
 
+      # @abstract Override this method to define behavior when
+      # aggregation query needs to retrieve results from the database.
+      # This should be a 2-dimensional Array with the values +[model, params]+
+      #
+      # @return [Array<Array>] Search results for query
       def results
         raise NotImplementedError, "#{self.class.name}#results"
       end
