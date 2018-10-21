@@ -6,10 +6,11 @@ module ActiveRecord
       include ActiveModel::Model
 
       included do
-        class_attribute :parent_model, :fields, :associations
+        class_attribute :parent_model, :fields, :associations, :indexes
 
         self.fields ||= {}
         self.associations ||= {}
+        self.indexes = Index::Collection.new
 
         field :id, default: -> { SecureRandom.uuid }
         field :created_at, type: Time, default: -> { Time.current }
@@ -39,6 +40,11 @@ module ActiveRecord
           define_method(name) { self[name] }
           define_method("#{name}=") { |value| self[name] = value }
           define_method(field.default_method_name, field.default) if field.default?
+        end
+
+        # Create a new index on this model.
+        def index(query = {}, options = {})
+          self.indexes << Index.new(query: query, options: options)
         end
 
         # Filter items by a given set of parameters, in the form of

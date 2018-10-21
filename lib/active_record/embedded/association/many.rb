@@ -40,22 +40,37 @@ module ActiveRecord
             embedded = build(model, item.to_h)
             embedded.attributes
           end
+          index(model)
         end
 
         # Update a single record in place.
         #
         # @param [ActiveRecord::Base] model - parent model to save into.
         # @param [Hash] item - Parameters to save
-        # @return [Hash] params saved into the parent model.
+        # @return [Boolean] whether the operation succeeded
         def update(model, item)
           model[name] ||= { 'data': [], 'index': {} }
           model[name]['data'] << item.stringify_keys
-          true
+          index(model)
         end
 
+        # Destroy a single record in place.
+        #
+        # @param [ActiveRecord::Base] model - persistence model
+        # @param [String] id - ID of element to destroy
+        # @return [Boolean] whether the operation succeeded
         def destroy(model, id: )
           model[name] ||= { 'data': [], 'index': {} }
           model[name]['data'].reject! { |item| item['id'] == id }
+          index(model)
+        end
+
+        # Reindex all data on this model.
+        def index(model)
+          data = model[name]['data']
+          model[name]['index'] = indexes.each_with_object({}) do |index, json|
+            json[index.name] = index.build(data)
+          end
           true
         end
       end

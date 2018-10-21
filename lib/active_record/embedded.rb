@@ -15,6 +15,9 @@ require "active_record/embedded/field/time"
 require "active_record/embedded/field/not_defined_error"
 require "active_record/embedded/field/type_error"
 
+require "active_record/embedded/index"
+require "active_record/embedded/index/collection"
+
 require "active_record/embedded/association"
 require "active_record/embedded/association/many"
 require "active_record/embedded/association/one"
@@ -63,6 +66,7 @@ module ActiveRecord
         embeds[name] = assoc = Association::Many.new(name: name, **options)
         define_method(name) { assoc.query(self) }
         define_method("#{name}=") { |value| assoc.assign(self, value) }
+        define_method("reindex_#{name}") { assoc.index(self) }
       end
 
       # @!method embeds_one(name, class_name: nil)

@@ -3,6 +3,8 @@ module ActiveRecord
     class Association
       attr_reader :name, :class_name
 
+      delegate :indexes, to: :embedded_class
+
       def initialize(name: , class_name: nil, **options)
         @name = name
         @class_name = class_name || name.to_s.classify
@@ -31,6 +33,10 @@ module ActiveRecord
 
       def destroy(model, **params)
         raise NotImplementedError, "#{self.class.name}#destroy"
+      end
+
+      def index(model, data = [])
+        raise NotImplementedError, "#{self.class.name}#index"
       end
 
       def build(model, value = {})

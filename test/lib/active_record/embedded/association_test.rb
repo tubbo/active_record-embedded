@@ -28,6 +28,7 @@ module ActiveRecord
       test 'interface methods' do
         model = MiniTest::Mock.new
         params = { foo: 'bar' }
+        data = [params]
         id = SecureRandom.uuid
 
         assert_raises(NotImplementedError) { @association.query(model) }
@@ -36,6 +37,7 @@ module ActiveRecord
         assert_raises(NotImplementedError) { @association.create(model, params) }
         assert_raises(NotImplementedError) { @association.update(model, params) }
         assert_raises(NotImplementedError) { @association.destroy(model) }
+        assert_raises(NotImplementedError) { @association.index(model, data) }
       end
     end
   end
