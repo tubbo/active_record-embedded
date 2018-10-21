@@ -30,7 +30,8 @@ Metrics/BlockLength:
 
 Metrics/ModuleLength:
   CountComments: false
-  Max: 180
+  Exclude:
+    - 'lib/active_record/embedded/model.rb'
 
 Metrics/ParameterLists:
   Max: 6
