@@ -8,7 +8,6 @@ module ActiveRecord
     # @abstract Subclass to define a custom field.
     class Field
       extend Interface
-      # PREFIX = 'ActiveRecord::Embedded::Field::'
 
       attr_reader :name, :default
 
