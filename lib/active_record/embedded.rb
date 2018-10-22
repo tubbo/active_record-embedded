@@ -74,6 +74,12 @@ module ActiveRecord
       end
     end
 
+    def self.supports?(adapter)
+      Aggregation.find(adapter.to_sym) && true
+    rescue TypeError
+      false
+    end
+
     class_methods do
       # @!method embeds_many(name, class_name: nil)
       #   Create a one-to-many relationship with an embedded model.
