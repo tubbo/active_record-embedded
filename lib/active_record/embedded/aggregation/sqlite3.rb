@@ -3,8 +3,8 @@
 module ActiveRecord
   module Embedded
     class Aggregation
-      # MySQL driver for aggregation queries
-      class Sqlite < Aggregation
+      # SQLite3 driver for aggregation queries
+      class Sqlite3 < Aggregation
         def results
           models = filtered_results
           models.offset(from) unless from.zero?
