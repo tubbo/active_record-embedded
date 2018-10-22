@@ -12,7 +12,7 @@ module ActiveRecord
       include Enumerable
 
       included do
-        attr_reader :model, :filters, :sorts, :association, :from, :to
+        attr_accessor :model, :filters, :sorts, :association, :from, :to
       end
 
       # @param [Model] model - Subject of aggregation
@@ -22,14 +22,14 @@ module ActiveRecord
       # @param [Integer] limit - Number of results to return
       # @param [Integer] offset - Starting point in collection
       def initialize(
-        model:, filters: {}, sorts: {}, association: nil, limit: -1, offset: 0
+        model:, filters: {}, sorts: {}, association: nil, offset: 0, limit: -1
       )
         @model = model
         @filters = filters
         @sorts = sorts
         @association = association
-        @from = limit
-        @to = offset
+        @from = offset
+        @to = limit
       end
 
       # Instantiate a new model in this collection without persisting.
@@ -62,14 +62,7 @@ module ActiveRecord
       # @param [Hash] filters - Key/value pairs to filter by
       # @return [ActiveRecord::Embedded::Relation]
       def where(filters = {})
-        self.class.new(
-          association: association,
-          model: model,
-          filters: filters,
-          sorts: sorts,
-          limit: limit_value,
-          offset: offset_value
-        )
+        clone.tap { |query| query.filters = filters }
       end
 
       # Sort this collection by the given set of keys. Values are
@@ -78,14 +71,7 @@ module ActiveRecord
       # @param [Hash] sorts - Key/direction pairs to sort by
       # @return [ActiveRecord::Embedded::Relation]
       def order(sorts = {})
-        self.class.new(
-          association: association,
-          model: model,
-          filters: filters,
-          sorts: sorts,
-          limit: limit_value,
-          offset: offset_value
-        )
+        clone.tap { |query| query.sorts = sorts }
       end
 
       # Limit this collection by the given number of records.
@@ -93,29 +79,15 @@ module ActiveRecord
       # @param [Integer] to - Number of records to return
       # @return [ActiveRecord::Embedded::Relation]
       def limit(to = -1)
-        self.class.new(
-          association: association,
-          model: model,
-          filters: filters,
-          sorts: sorts,
-          limit: from,
-          offset: to
-        )
+        clone.tap { |query| query.limit = to }
       end
 
       # Begin returning records starting at the given position.
       #
       # @param [Integer] from - Start of the offset.
       # @return [ActiveRecord::Embedded::Relation]
-      def offset(to = -1)
-        self.class.new(
-          association: association,
-          model: model,
-          filters: filters,
-          sorts: sorts,
-          limit: from,
-          offset: to
-        )
+      def offset(from = 0)
+        clone.tap { |query| query.offset = from }
       end
 
       # Find a model by the given params. Uses an index if possible,
@@ -157,7 +129,23 @@ module ActiveRecord
         find(id) || raise(RecordNotFound, id)
       end
 
+      # Return a subset of the results in this query, up to the first 10.
+      #
+      # @return [String] Human-readable representation of this object
+      def inspect
+        "#<#{self.class.name} [#{inspect_entries.join(', ')}]>"
+      end
+
       private
+
+      def inspect_entries
+        entries = if to == -1
+                    take(11).map!(&:inspect)
+                  else
+                    take([to, 11].compact.min).map!(&:inspect)
+                  end
+        entries[10] = '...' if entries.size == 11
+      end
 
       # Find a given model by its index.
       #

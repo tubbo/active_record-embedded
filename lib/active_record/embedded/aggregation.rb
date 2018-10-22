@@ -42,17 +42,6 @@ module ActiveRecord
         raise NotImplementedError, "#{self.class.name}#results"
       end
 
-      def inspect
-        entries = if @limit_value == -1
-                    take(11).map!(&:inspect)
-                  else
-                    take([@limit_value, 11].compact.min).map!(&:inspect)
-                  end
-        entries[10] = '...' if entries.size == 11
-
-        "#<#{self.class.name} [#{entries.join(', ')}]>"
-      end
-
       protected
 
       # Parent model class of the embedded model.

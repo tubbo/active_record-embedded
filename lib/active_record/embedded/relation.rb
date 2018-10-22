@@ -40,20 +40,6 @@ module ActiveRecord
         data[from..to].each { |params| yield build(params) }
       end
 
-      # Return a subset of the results in this query, up to the first 10.
-      #
-      # @return [String] Human-readable representation of this object
-      def inspect
-        entries = if limit_value == -1
-                    take(11).map!(&:inspect)
-                  else
-                    take([limit_value, 11].compact.min).map!(&:inspect)
-                  end
-        entries[10] = '...' if entries.size == 11
-
-        "#<#{self.class.name} [#{entries.join(', ')}]>"
-      end
-
       private
 
       # @private
