@@ -84,6 +84,18 @@ module ActiveRecord
         assert address.destroy!
         refute_includes order.reload.items, item
       end
+
+      test 'active record integration' do
+        order = orders(:one)
+        item = order.items.first
+        cache_key = "orders/#{order.id}/items/#{item.id}"
+        timestamp = item.updated_at.utc.to_s(:usec)
+
+        assert_equal cache_key, item.cache_key
+        assert_equal timestamp, item.cache_version
+        assert_equal "#{cache_key}-#{timestamp}", item.cache_key_with_version
+        assert_equal item.id, item.to_param
+      end
     end
   end
 end
