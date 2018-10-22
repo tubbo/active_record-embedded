@@ -27,6 +27,8 @@ module ActiveRecord
 
       private
 
+      # Module prefix for all implementations of this interface.
+      #
       # @private
       def prefix
         "#{name}::"
