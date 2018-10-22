@@ -5,9 +5,29 @@ class ShipmentTest < ActiveSupport::TestCase
     @_original_adapter = ActiveRecord::Embedded.config.adapter
     ActiveRecord::Embedded.config.adapter = :mysql
 
+    order1 = orders(:one)
+    order2 = orders(:one)
+    shipment1 = Shipment.create!(
+      order_id: order1.id,
+      items: order1.items.map do |item|
+        {
+          sku: item.sku,
+          quantity: item.quantity,
+          shipping_price: 1.99
+        }
+      end
+    )
+    shipment2 = Shipment.create!(
+      order_id: order2.id,
+      items: order2.items.map do |item|
+        {
+          sku: item.sku,
+          quantity: item.quantity,
+          shipping_price: 1.99
+        }
+      end
+    )
     collection = Shipment::Item.where(quantity: 1)
-    shipment1 = shipments(:one)
-    shipment2 = shipments(:one)
 
     refute_empty collection
     assert_includes collection, shipment1.items.find_by(quantity: 1)

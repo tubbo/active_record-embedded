@@ -145,6 +145,7 @@ module ActiveRecord
                     take([to, 11].compact.min).map!(&:inspect)
                   end
         entries[10] = '...' if entries.size == 11
+        entries
       end
 
       # Find a given model by its index.

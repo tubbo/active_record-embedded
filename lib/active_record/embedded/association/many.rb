@@ -40,6 +40,7 @@ module ActiveRecord
           model[name] ||= { 'data': [], 'index': {} }
           model[name]['data'] = items.map do |item|
             embedded = build(model, item.to_h)
+            embedded[:id] ||= SecureRandom.uuid # TODO: hack to make mysql test pass
             embedded.attributes
           end
           index(model)
