@@ -15,7 +15,7 @@ module ActiveRecord
           @results ||= parent
                        .all
                        .map { |model| [model, query_for(model)] }
-                       .select { |_model, items| items.any? }
+                       .select { |_model, items| items.any? }[from..to]
         end
       end
     end

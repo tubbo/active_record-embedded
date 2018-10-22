@@ -12,8 +12,7 @@ module ActiveRecord
       include Enumerable
 
       included do
-        attr_reader :model, :filters, :sorts, :association,
-                    :limit_value, :start_value
+        attr_reader :model, :filters, :sorts, :association, :from, :to
       end
 
       # @param [Model] model - Subject of aggregation
@@ -21,16 +20,16 @@ module ActiveRecord
       # @param [Hash] sorts - Key/value pairs to sort results with
       # @param [Association] association - Metadata for embedded relationship
       # @param [Integer] limit - Number of results to return
-      # @param [Integer] start - Starting point in collection
+      # @param [Integer] offset - Starting point in collection
       def initialize(
-        model:, filters: {}, sorts: {}, association: nil, limit: -1, start: 0
+        model:, filters: {}, sorts: {}, association: nil, limit: -1, offset: 0
       )
         @model = model
         @filters = filters
         @sorts = sorts
         @association = association
-        @limit_value = limit
-        @start_value = start
+        @from = limit
+        @to = offset
       end
 
       # Instantiate a new model in this collection without persisting.
@@ -67,11 +66,13 @@ module ActiveRecord
           association: association,
           model: model,
           filters: filters,
-          sorts: sorts
+          sorts: sorts,
+          limit: limit_value,
+          offset: offset_value
         )
       end
 
-      # Order this collection by the given set of keys. Values are
+      # Sort this collection by the given set of keys. Values are
       # the direction, +:desc+ or +:asc+.
       #
       # @param [Hash] sorts - Key/direction pairs to sort by
@@ -81,7 +82,39 @@ module ActiveRecord
           association: association,
           model: model,
           filters: filters,
-          sorts: sorts
+          sorts: sorts,
+          limit: limit_value,
+          offset: offset_value
+        )
+      end
+
+      # Limit this collection by the given number of records.
+      #
+      # @param [Integer] to - Number of records to return
+      # @return [ActiveRecord::Embedded::Relation]
+      def limit(to = -1)
+        self.class.new(
+          association: association,
+          model: model,
+          filters: filters,
+          sorts: sorts,
+          limit: from,
+          offset: to
+        )
+      end
+
+      # Begin returning records starting at the given position.
+      #
+      # @param [Integer] from - Start of the offset.
+      # @return [ActiveRecord::Embedded::Relation]
+      def offset(to = -1)
+        self.class.new(
+          association: association,
+          model: model,
+          filters: filters,
+          sorts: sorts,
+          limit: from,
+          offset: to
         )
       end
 
@@ -155,7 +188,6 @@ module ActiveRecord
         index = model[association.name]['index'][name]
 
         return if index.blank? && Embedded.config.scan_tables
-
         raise NoSolutionsError, name if index.blank?
 
         index

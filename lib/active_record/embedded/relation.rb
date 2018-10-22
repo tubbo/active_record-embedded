@@ -37,7 +37,7 @@ module ActiveRecord
           data = apply_sorts!(data)
         end
 
-        data.each { |params| yield build(params) }
+        data[from..to].each { |params| yield build(params) }
       end
 
       # Return a subset of the results in this query, up to the first 10.

@@ -9,8 +9,10 @@ module ActiveRecord
         delegate :any?, :empty?, to: :results
 
         def results
-          parent.where("#{as} @> ?", params)
-                .map { |record| [record, query_for(record)] }
+          criteria = parent.where("#{as} @> ?", params)
+          criteria = criteria.offset(from) unless from.zero?
+          criteria = criteria.limit(to) unless to == -1
+          criteria.map { |record| [record, query_for(record)] }
         end
 
         private
