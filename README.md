@@ -141,8 +141,10 @@ one exists. Otherwise, the "native" adapter is used which uses Ruby to
 iterate through all records. The following databases are supported:
 
 - [PostgreSQL][postgres-driver] (requires [PostgreSQL 9.3][postgres])
-- [MySQL (planned)][mysql-driver] (requires [MySQL 5.7.8][mysql])
-- [SQLite3 w/JSON1 Extension (planned)][sqlite-driver] (requires the [JSON1][] extension)
+- [MySQL (WIP)][mysql-driver] (requires [MySQL 5.7.8][mysql])
+- [SQLite3 w/JSON1 Extension (WIP)][sqlite-driver] (requires the [JSON1][] extension)
+- SQL Server (planned)
+- Oracle (planned)
 
 The goal is to support all databases with ActiveRecord adapters that
 support JSON as a native data type.
