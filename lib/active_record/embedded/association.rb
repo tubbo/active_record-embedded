@@ -7,12 +7,13 @@ module ActiveRecord
     # implement in order to be compatible with the rest of the
     # +ActiveRecord::Embedded+ API.
     class Association
-      attr_reader :name, :class_name
+      attr_reader :name, :class_name, :as
 
       delegate :indexes, to: :embedded_class
 
-      def initialize(name:, class_name: nil, **options)
+      def initialize(name:, class_name: nil, as: nil, **options)
         @name = name
+        @as = as || name
         @class_name = class_name || name.to_s.classify
         options.each { |key, value| instance_variable_set "@#{key}", value }
       end
@@ -46,7 +47,7 @@ module ActiveRecord
       end
 
       def build(model, value = {})
-        return value if value.is_a? embedded_class
+        return value unless value.is_a? Hash
 
         embedded_class.new(
           _parent: model,

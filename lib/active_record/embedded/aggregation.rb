@@ -13,7 +13,7 @@ module ActiveRecord
       delegate :parent_model, to: :model
       delegate :as, to: :parent_model
       delegate :build, to: :association
-      delegate_missing_to :results
+      delegate :any?, :empty?, :join, to: :results
 
       def initialize(*_args)
         super
