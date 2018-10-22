@@ -142,7 +142,7 @@ iterate through all records. The following databases are supported:
 
 - [PostgreSQL][postgres-driver] (requires [PostgreSQL 9.3][postgres])
 - [MySQL (planned)][mysql-driver] (requires [MySQL 5.7.8][mysql])
-- Microsoft SQL Server (planned)
+- [SQLite3 w/JSON1 Extension (planned)][sqlite-driver] (requires the [JSON1][] extension)
 
 The goal is to support all databases with ActiveRecord adapters that
 support JSON as a native data type.
@@ -381,5 +381,7 @@ The gem is available as open source under the terms of the [MIT License][].
 [Money]: http://rubymoney.github.io/money/
 [postgres-driver]: https://www.rubydoc.info/github/tubbo/active_record-embedded/ActiveRecord/Embedded/Aggregation/Postgresql
 [mysql-driver]: https://github.com/tubbo/active_record-embedded/tree/mysql-driver
+[sqlite-driver]: https://github.com/tubbo/active_record-embedded/tree/sqlite-driver
 [postgres]: https://www.postgresql.org/docs/9.3/static/functions-json.html
 [mysql]: https://dev.mysql.com/doc/relnotes/mysql/5.7/en/news-5-7-8.html#mysqld-5-7-8-json
+[JSON1]: https://www.sqlite.org/json1.html
