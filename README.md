@@ -328,6 +328,15 @@ for said index. The options for indexes are as follows:
 - `:unique` if set to `true` will throw an error when a non-unique value
   is added to the index
 
+### Rails Integration
+
+Although Rails isn't required to use this library, some out-of-box
+functionality is included into the model in case it is within a Rails
+app. You'll find that the generated `*_path`, `*_url` and of course the
+`url_for` helpers will generate predictable path names for your embedded
+models, and `#cache_key` has been modified to include the parent model's
+cache key for easy manual expiration.
+
 ## Contributing
 
 All contributions to this library are welcome and encouraged. Please submit
