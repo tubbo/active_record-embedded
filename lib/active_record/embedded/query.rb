@@ -6,8 +6,6 @@ module ActiveRecord
     # +ActiveRecord::Embedded::Relation+ and
     # +ActiveRecord::Embedded::Aggregation+ objects, and provides the
     # various SQL methods.
-    #
-    # @abstract Include this module to provide querying functionality
     module Query
       extend ActiveSupport::Concern
 

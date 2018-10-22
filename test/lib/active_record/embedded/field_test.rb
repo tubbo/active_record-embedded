@@ -21,18 +21,18 @@ module ActiveRecord
         assert_equal Field::String, Field.find(String)
         assert_equal Field::String, Field.find(:String)
         assert_equal Field::Integer, Field.find('Integer')
-        assert_raises(Field::TypeError) { Field.find('Bogus') }
-        assert_raises(Field::TypeError) { Field.find(Object) }
+        assert_raises(TypeError) { Field.find('Bogus') }
+        assert_raises(TypeError) { Field.find(Object) }
       end
 
       test 'cast' do
-        field = Field.new(:name, -> { 'Foo' })
-        str = Field::String.new(:foo, nil)
-        int = Field::Integer.new(:foo, nil)
-        float = Field::Float.new(:foo, nil)
-        hash = Field::Hash.new(:foo, nil)
-        arr = Field::Array.new(:foo, nil)
-        bool = Field::Boolean.new(:foo, nil)
+        field = Field.new(name: :name, default: -> { 'Foo' })
+        str = Field::String.new(name: :foo)
+        int = Field::Integer.new(name: :foo)
+        float = Field::Float.new(name: :foo)
+        hash = Field::Hash.new(name: :foo)
+        arr = Field::Array.new(name: :foo)
+        bool = Field::Boolean.new(name: :foo)
         params = { foo: 'bar' }
 
         assert_raises(NotImplementedError) { field.cast(nil) }

@@ -41,6 +41,7 @@ module ActiveRecord
             association = parent_model&.association
 
             Aggregation.create(
+              type: Embedded.config.adapter,
               model: self,
               filters: where,
               sorts: order,

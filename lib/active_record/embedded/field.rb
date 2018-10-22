@@ -7,11 +7,12 @@ module ActiveRecord
     #
     # @abstract Subclass to define a custom field.
     class Field
-      PREFIX = 'ActiveRecord::Embedded::Field::'
+      extend Interface
+      # PREFIX = 'ActiveRecord::Embedded::Field::'
 
       attr_reader :name, :default
 
-      def initialize(name, default)
+      def initialize(name:, default: nil)
         @name = name
         @default = if default.respond_to? :call
                      default
@@ -28,22 +29,6 @@ module ActiveRecord
       # Name of the method holding the default value.
       def default_method_name
         "__#{name}_default__"
-      end
-
-      # All type names, which are subclasses of this object.
-      #
-      # @return [Array<String>]
-      def self.types
-        subclasses.map { |field| field.name.gsub(PREFIX, '') }
-      end
-
-      # Find a field object by its given type name.
-      #
-      # @return [ActiveRecord::Embedded::Field] Subclass of +Field+
-      def self.find(type)
-        subclasses.find do |field|
-          field.name.gsub(PREFIX, '') == type.to_s.gsub(PREFIX, '')
-        end || raise(TypeError, type)
       end
 
       # Cast a given value to this type. Short-circuits when value

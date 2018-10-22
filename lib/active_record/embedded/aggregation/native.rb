@@ -9,12 +9,8 @@ module ActiveRecord
       # best to use a database-specific adapter such as +:postgresql+
       # if you need aggregations.
       class Native < Aggregation
-        delegate :empty?, to: :results
-
-        def query_for(model)
-          model.public_send(as).where(@filters)
-        end
-
+        # Map over all models in the database and perform the given
+        # query for their embedded items.
         def results
           @results ||= parent
                        .all

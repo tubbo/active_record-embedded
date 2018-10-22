@@ -8,37 +8,16 @@ module ActiveRecord
     # @abstract Subclass to define a new adapter
     class Aggregation
       include Query
+      extend Interface
 
       delegate :parent_model, to: :model
       delegate :as, to: :parent_model
       delegate :build, to: :association
+      delegate_missing_to :results
 
       def initialize(*_args)
         super
         @association ||= parent_model&.association
-      end
-
-      # Find an adapter class for the given +config.adapter+. Fall
-      # back to the native adapter (e.g., iterating in Ruby) when none
-      # can be found.
-      #
-      # @param [Symbol] id - Current database adapter in use
-      # @return [Class]
-      def self.find(id = :native)
-        driver = id.to_s.demodulize.classify
-        "ActiveRecord::Embedded::Aggregation::#{driver}".constantize
-      rescue NameError
-        Rails.logger.debug("Database '#{id}' has no embedded adapter")
-        Rails.logger.debug('Falling back to native...')
-        ActiveRecord::Embedded::Aggregation::Native
-      end
-
-      # Shorthand for defining a new aggregation with the correct
-      # adapter.
-      #
-      # @return [Aggregation]
-      def self.create(**options)
-        find(Embedded.config.adapter).new(**options)
       end
 
       # Instantiate the proper model objects for each search result in
@@ -82,6 +61,13 @@ module ActiveRecord
       # @return [ActiveRecord::Base]
       def parent
         parent_model.embedded_class
+      end
+
+      # Query for filters and sorts on the given model.
+      #
+      # @private
+      def query_for(record)
+        record.public_send(as).where(filters)
       end
     end
   end

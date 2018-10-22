@@ -5,6 +5,8 @@ require 'active_support/all'
 
 require 'active_record/embedded/engine' if defined? Rails
 require 'active_record/embedded/error'
+require 'active_record/embedded/type_error'
+require 'active_record/embedded/interface'
 require 'active_record/embedded/query'
 require 'active_record/embedded/query/no_solutions_error'
 require 'active_record/embedded/field'
@@ -17,7 +19,6 @@ require 'active_record/embedded/field/boolean'
 require 'active_record/embedded/field/regexp'
 require 'active_record/embedded/field/time'
 require 'active_record/embedded/field/not_defined_error'
-require 'active_record/embedded/field/type_error'
 
 require 'active_record/embedded/index'
 require 'active_record/embedded/index/collection'

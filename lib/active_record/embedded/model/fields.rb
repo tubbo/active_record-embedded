@@ -29,7 +29,9 @@ module ActiveRecord
           # @param [Class] type - Class of the field type
           # @param [Object|Proc] default (optional) - Default value
           def field(name, type: String, default: nil)
-            fields[name] = field = Field.find(type).new(name, default)
+            fields[name] = field = Field.create(
+              type: type, name: name, default: default
+            )
             define_method(name) do
               self[name] || public_send(field.default_method_name)
             end
