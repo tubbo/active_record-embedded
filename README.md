@@ -58,27 +58,19 @@ $ rails db:migrate
 ```
 
 If your database doesn't support storing schema-less data, you can
-store data in a regular String datatype and `serialize` it with
-ActiveRecord:
+store data in a regular String datatype:
 
 ```bash
 $ rails generate migration AddItemsToOrder items
 $ rails db:migrate
 ```
 
-Then, in your model:
+Then, configure `ActiveRecord::Embedded` to serialize embedded data in
+an initializer:
 
 ```ruby
-class Order < ApplicationRecord
-  serialize :items, Hash
-
-  embeds_many :items
-end
+ActiveRecord::Embedded.config.serialize_data = true
 ```
-
-Note the usage of `Hash` in this serialization. All embedded data, even
-one-to-many relationships, are stored in Hash format for quick retrieval
-by ID.
 
 ### Querying
 

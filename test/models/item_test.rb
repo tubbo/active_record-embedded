@@ -65,6 +65,9 @@ class ItemTest < ActiveSupport::TestCase
   end
 
   test 'query all items with native adapter' do
+    @_original_adapter = ActiveRecord::Embedded.config.adapter
+    ActiveRecord::Embedded.config.adapter = :native
+
     matching_item_from_order1 = orders(:one).items.find_by(quantity: 1)
     matching_item_from_order2 = orders(:two).items.find_by(quantity: 1)
     non_matching_item_from_order1 = orders(:two).items.find_by(quantity: 2)
@@ -83,9 +86,12 @@ class ItemTest < ActiveSupport::TestCase
       refute_includes collection, non_matching_item_from_order1
       refute_includes collection, non_matching_item_from_order2
     end
+  ensure
+    ActiveRecord::Embedded.config.adapter = @_original_adapter
   end
 
   test 'query all items with postgres adapter' do
+    @_original_adapter = ActiveRecord::Embedded.config.adapter
     ActiveRecord::Embedded.config.adapter = :postgresql
 
     collection = Item.where(quantity: 1)
@@ -97,6 +103,6 @@ class ItemTest < ActiveSupport::TestCase
     assert_includes collection, order2.items.find_by(quantity: 1)
     refute_includes collection, order2.items.find_by(quantity: 2)
   ensure
-    ActiveRecord::Embedded.config.adapter = :native
+    ActiveRecord::Embedded.config.adapter = @_original_adapter
   end
 end

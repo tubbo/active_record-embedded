@@ -69,7 +69,8 @@ module ActiveRecord
     def self.config
       @config ||= ActiveSupport::Configurable::Configuration.new.tap do |cfg|
         cfg.scan_tables = true
-        cfg.adapter = 'native'
+        cfg.adapter = :native
+        cfg.serialize_data = false
       end
     end
 
@@ -81,6 +82,7 @@ module ActiveRecord
       #   @param [String] class_name - (optional) Class name of the model.
       def embeds_many(name, **options)
         embeds[name] = assoc = Association::Many.new(name: name, **options)
+        serialize name, Hash if Embedded.config.serialize_data
         define_method(name) { assoc.query(self) }
         define_method("#{name}=") { |value| assoc.assign(self, value) }
         define_method("reindex_#{name}") { assoc.index(self) }
@@ -93,6 +95,7 @@ module ActiveRecord
       #   @param [String] class_name - (optional) Class name of the model.
       def embeds_one(name, **options)
         embeds[name] = assoc = Association::One.new(name: name, **options)
+        serialize name, Hash if Embedded.config.serialize_data
         define_method(name) { assoc.query(self) }
         define_method("#{name}=") { |value| assoc.assign(self, value) }
         define_method("create_#{name}") { |value| assoc.create(self, value) }
@@ -100,7 +103,5 @@ module ActiveRecord
         define_method("destroy_#{name}") { assoc.destroy(self) }
       end
     end
-
-    config.table_scan = true
   end
 end
