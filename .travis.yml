@@ -9,7 +9,7 @@ before_script:
   > ./cc-test-reporter
 - chmod +x ./cc-test-reporter
 - "./cc-test-reporter before-build"
-- rails app:db:setup
+- rails app:db:setup app:mysql:db:setup
 script: rails test
 after_script:
 - "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT"
@@ -21,5 +21,8 @@ deploy:
   on:
     tags: true
     repo: tubbo/active_record-embedded
+services:
+  - postgresql
+  - mysql
 addons:
   postgresql: '9.4'
