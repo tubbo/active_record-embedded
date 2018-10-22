@@ -47,8 +47,9 @@ module ActiveRecord
       # Prefix the embedded model's cache key with the parent model's
       # cache key.
       #
-      # @return [String]
-      def cache_key
+      # @return [String] a stable cache key that can be used to identify
+      #                  this embedded record.
+      def cache_key(*timestamp_names)
         "#{_parent.cache_key}/#{super}"
       end
 

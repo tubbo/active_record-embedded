@@ -108,6 +108,45 @@ items = items.order(created_at: :desc) # => <ActiveRecord::Embedded::Relation ..
 items.map { |item| item } # => <Array<Item>>
 ```
 
+#### Aggregation Queries
+
+Aggregations are queries performed on an entire table of records, rather
+than just the embedded data within a single record. Aggregations can be
+accessed using the familiar ActiveRecord querying API:
+
+```ruby
+# Filter by key/value pairs
+Item.where(sku: 'SKU1')
+
+# Sort by fields with a given direction
+items = Item.order(quantity: :asc)
+
+# Return a maximum of 10 items
+items.limit(10)
+
+# Start at the 2nd item
+items.offset(2)
+```
+
+These methods are actually just syntax sugar for the `.aggregate`
+method, which can be used to construct custom queries without needing to
+chain method calls:
+
+```ruby
+Item.aggregate(start: 2, limit: 8)
+```
+
+Aggregation queries are aided by your ActiveRecord adapter's driver, if
+one exists. Otherwise, the "native" adapter is used which uses Ruby to
+iterate through all records. The following databases are supported:
+
+- [PostgreSQL][postgres-driver] (requires [PostgreSQL 9.3][postgres])
+- [MySQL (planned)][mysql-driver] (requires [MySQL 5.7.8][mysql])
+- [Microsoft SQL Server (planned)][sql-server-driver]
+
+The goal is to support all databases with ActiveRecord adapters that
+support JSON as a native data type.
+
 ### Assignment
 
 Embedded relations are assigned in a similar way to ActiveRecord's API:
@@ -132,7 +171,8 @@ Item.new(quantity: 1, sku: 'SKU456', parent: @order) # => <Item...>
 ```
 
 Methods such as `create_#{assocation}` and `destroy_#{assocation}` are
-provided for singular relationships.
+provided for singular relationships, just like in ActiveRecord's
+`has_one` association.
 
 Consider a `User` which embeds address data:
 
@@ -197,13 +237,20 @@ These types are:
 - `null`, which is represented in Ruby as [nil][]
 
 The above list represents a total catalog of all types that can be
-eventually stored into the database. Due to this library's rich
-typecasting system, however, custom types 
+eventually stored into the database, but additional objects are
+represented by custom types...
 
 #### Custom Types
 
-To create a custom type, define a subclass of
-`ActiveRecord::Embedded::Field` like so:
+Custom types are supported by subclassing
+`ActiveRecord::Embedded::Field`. This is an interface that requires the
+implementation of a `#cast` method in order to provide typecasting
+functionality for a complex type. Custom types "boil down" a complex
+type defined in Ruby into something that can be serialized to a
+primitive JSON type, typically a Hash.
+
+Here's an example of a custom type for the [Money][] object, defined in
+**lib/active_record/embedded/field/money.rb** in your Rails application:
 
 ```ruby
 module ActiveRecord
@@ -212,15 +259,22 @@ module ActiveRecord
       class Money < self
         # This method is called to prepare the field for insertion into
         # the database. It must return one of the standard JSON types.
+        # In this example, a Hash is returned.
         def cast(value)
-          value.to_h
+          {
+            '$cents' => value.cents,
+            '$currency' => value.currency
+          }
         end
 
         # When a value is being pulled out of the database, this is the
         # method called to convert its value back into that of the
-        # higher-level field type.
+        # higher-level field type. Since the #cast method converts this
+        # type into a Hash, access is granted to the currency and cents
+        # of the given object.
         def coerce(value = nil)
-          value.to_m
+          return if value.blank?
+          Money.new(value['$cents'], value['$currency'])
         end
       end
     end
@@ -228,9 +282,13 @@ module ActiveRecord
 end
 ```
 
-(you may need to explicitly require it)
+You can require this file in your **config/application.rb**:
 
-By doing so, the `Money` type will be available in your models:
+```ruby
+require 'active_record/embedded/field/money'
+```
+
+By doing so, the `Money` type will be available to your embedded models:
 
 ```ruby
 class Item
@@ -242,7 +300,33 @@ class Item
 end
 ```
 
-This causes 
+### Indexing
+
+Indexes on known queries help to speed up reading embedded data from the
+database, especially when dealing with a large amount of records.
+
+To define an index on an embedded model, use the `index` macro:
+
+```ruby
+class Item
+  include ActiveRecord::Embedded::Model
+
+  embedded_in :order
+
+  field :sku, type: String
+
+  index :sku, unique: true
+end
+```
+
+This macro is based off of Mongoid's, but doesn't include the esoteric
+syntax of MongoDB. Instead, you provide the attributes you wish to index
+(an Array can be specified if it's a compound index), then the options
+for said index. The options for indexes are as follows:
+
+- `:direction` can be `:asc` (default) or `:desc`
+- `:unique` if set to `true` will throw an error when a non-unique value
+  is added to the index
 
 ## Contributing
 
@@ -260,10 +344,10 @@ this once):
 $ rails app:db:setup
 ```
 
-Run all tests with the following command:
+Run all tests and RuboCop lint checks with the following command:
 
 ```bash
-$ rails test
+$ rails lint test
 ```
 
 ## License
@@ -285,3 +369,9 @@ The gem is available as open source under the terms of the [MIT License][].
 [true]: http://ruby-doc.org/core-2.5.1/TrueClass.html
 [false]: http://ruby-doc.org/core-2.5.1/FalseClass`.html
 [nil]: http://ruby-doc.org/core-2.5.1/NilClass.html
+[Money]: http://rubymoney.github.io/money/
+[postgres-driver]: https://www.rubydoc.info/github/tubbo/active_record-embedded/ActiveRecord/Embedded/Aggregation/Postgresql
+[mysql-driver]: https://github.com/tubbo/active_record-embedded/tree/mysql-driver
+[sql-server-driver]: https://github.com/tubbo/active_record-embedded/tree/sql-server-driver
+[postgres]: https://www.postgresql.org/docs/9.3/static/functions-json.html
+[mysql]: https://dev.mysql.com/doc/relnotes/mysql/5.7/en/news-5-7-8.html#mysqld-5-7-8-json
