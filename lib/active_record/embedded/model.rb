@@ -28,14 +28,7 @@ module ActiveRecord
       def initialize(uncased = {}, _parent: nil, _association: nil, **params)
         @_parent = _parent || params[parent_model.name]
         @_association = _association
-        @attributes = params.merge(uncased).each_with_object({}) do |(key, val), attrs|
-          cased_key = if key.to_s =~ /[A-Z]|\s/
-                        key.to_s.camelize(:upper).underscore.to_sym
-                      else
-                        key
-                      end
-          attrs[cased_key] = val
-        end
+        @attributes = amalgamate_attributes(uncased, params)
 
         run_callbacks :initialize do
           super(attributes)
