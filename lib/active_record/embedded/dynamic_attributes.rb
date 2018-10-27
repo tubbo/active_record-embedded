@@ -14,11 +14,8 @@ module ActiveRecord
       # @return [Object] value persisted to the model.
       def method_missing(method, value = nil, *_arguments)
         return super unless respond_to? method
-
         attribute = method.to_s.delete('=').to_sym
-
-        self.class.field attribute, type: value.class
-        self[attribute] = value
+        self[attribute] = cast(attribute, value)
       end
 
       # Respond to all missing methods.
@@ -26,6 +23,24 @@ module ActiveRecord
       # @return [TrueClass]
       def respond_to_missing?(method, include_private = false)
         method.to_s.end_with?('=') || super
+      end
+
+      # Override to rescue the error thrown when a field is not defined,
+      # and define it on-the-fly so it does not get thrown again.
+      def cast(attribute, value)
+        super
+      rescue Field::NotDefinedError
+        self.class.field(attribute, type: value.class)
+        super
+      end
+
+      # Override to rescue the error thrown when a field is not defined,
+      # and define it on-the-fly so it does not get thrown again.
+      def coerce(attribute, value)
+        super
+      rescue Field::NotDefinedError
+        self.class.field(attribute, type: value.class)
+        super
       end
     end
   end

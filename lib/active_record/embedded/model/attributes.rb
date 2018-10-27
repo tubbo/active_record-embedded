@@ -69,13 +69,18 @@ module ActiveRecord
 
         private
 
+        CAMEL_CASED = /[A-Z][a-z]|\s/
+        SCREAMING_SNAKE_CASED = /[A-Z]_/
+
         # Create a single attributes Hash from uncased string-key
         # attributes and cased symbol-key attributes.
         #
         # @private
         def amalgamate_attributes(strs = {}, syms = {})
           syms.merge(strs).each_with_object({}) do |(key, value), attributes|
-            param = if key.to_s.match?(/[A-Z]|\s/)
+            param = if key.to_s.match?(SCREAMING_SNAKE_CASED)
+                      key.to_s.downcase.to_sym
+                    elsif key.to_s.match?(CAMEL_CASED)
                       key.to_s.camelize(:upper).underscore.to_sym
                     else
                       key.to_sym
