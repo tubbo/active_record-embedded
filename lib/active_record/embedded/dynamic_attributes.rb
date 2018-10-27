@@ -14,7 +14,10 @@ module ActiveRecord
       # @return [Object] value persisted to the model.
       def method_missing(method, value = nil, *_arguments)
         return super unless respond_to? method
+
         attribute = method.to_s.delete('=').to_sym
+        return self[attribute] if attribute == method
+
         self[attribute] = cast(attribute, value)
       end
 

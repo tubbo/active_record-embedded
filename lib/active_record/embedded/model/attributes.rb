@@ -25,10 +25,12 @@ module ActiveRecord
         #                  it cannot be found.
         def [](key)
           value = attributes[key.to_sym]
+          ivar = "@#{key}"
 
           return if value.nil?
+          return instance_variable_get(ivar) if instance_variable_defined?(ivar)
 
-          coerce(key, value)
+          instance_variable_set(ivar, coerce(key, value))
         end
 
         # Write an attribute to the model.

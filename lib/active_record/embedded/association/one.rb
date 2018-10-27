@@ -16,9 +16,11 @@ module ActiveRecord
         # @return [ActiveRecord::Embedded::Model]
         def query(model)
           attributes = model[name]['data']
-          return if attributes.nil?
 
-          build(model, attributes)
+          return if attributes.nil?
+          return @embedded if defined? @embedded
+
+          @embedded = build(model, attributes)
         end
 
         # Since the +#query+ method takes care of building the resource,
