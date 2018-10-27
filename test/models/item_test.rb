@@ -105,4 +105,23 @@ class ItemTest < ActiveSupport::TestCase
   ensure
     ActiveRecord::Embedded.config.adapter = @_original_adapter
   end
+
+  test 'use alternative case for attributes' do
+    item = Item.new(
+      _parent: Order.new,
+      sku: '12345',
+      'Quantity' => 1,
+      'PRICE_ADJUSTMENTS' => [
+        { price: 1 },
+        { price: 2 },
+        { price: 3 }
+      ],
+      productAttributes: { foo: 'bar' }
+    )
+
+    assert_equal '12345', item.sku
+    assert_equal 1, item.quantity
+    assert_equal 'bar', item.product_attributes[:foo]
+    assert_equal 1, item.price_adjustments.first[:price]
+  end
 end

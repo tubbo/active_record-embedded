@@ -11,6 +11,8 @@ class Item
   field :customizations, type: Hash, default: {}
   field :discounts, type: Array, default: []
   field :placed_at, type: Time
+  field :product_attributes, type: Hash, default: {}
+  field :price_adjustments, type: Array, default: []
 
   validates :quantity, presence: true
 

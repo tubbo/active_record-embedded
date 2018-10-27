@@ -25,10 +25,12 @@ module ActiveRecord
       # @param [ActiveRecord::Base] _parent
       # @param [Embedded::Association] _association - Relationship metadata
       # @param [Hash] attributes - Additional model attributes
-      def initialize(_parent: nil, _association: nil, **attributes)
-        @_parent = _parent || attributes[parent_model.name]
+      def initialize(uncased = {}, _parent: nil, _association: nil, **params)
+        @_parent = _parent || params[parent_model.name]
         @_association = _association
-        @attributes = attributes
+        @attributes = uncased.merge(params).each_with_object({}) do |(key, val), attrs|
+          attrs[key.to_s.camelize(:upper).underscore.to_sym] = val
+        end
 
         run_callbacks :initialize do
           super(attributes)
