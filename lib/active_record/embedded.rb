@@ -35,6 +35,7 @@ require 'active_record/embedded/aggregation'
 require 'active_record/embedded/aggregation/native'
 require 'active_record/embedded/aggregation/postgresql'
 require 'active_record/embedded/aggregation/mysql'
+require 'active_record/embedded/aggregation/sqlserver'
 
 require 'active_record/embedded/model/attributes'
 require 'active_record/embedded/model/persistence'

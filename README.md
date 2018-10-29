@@ -338,6 +338,16 @@ a [pull request][] for changes to documentation or source, and if you see an
 issue, please [report it][]! Please make sure you're familiar with the
 [code of conduct][] when contributing.
 
+### Development Dependencies
+
+To develop on this application, please install the following hard
+dependencies:
+
+- PostgreSQL 9.4 or above
+- MySQL 5.7 or above
+- Microsoft SQL Server and FreeTDS
+- SQLite 3.9 or above
+
 ### Running Tests
 
 To run tests, make sure you have a database set up (you only have to do
