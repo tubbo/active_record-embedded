@@ -2,8 +2,30 @@
 
 one:
   order: one
-  items: 
+  total: 10.00
+  tender:
+    data:
+      id: 60931b0f-6283-408c-9a5d-4a39bce0a85d
+      token: '12345'
+      expiration_month: 1
+      expiration_year: 2030
 
 two:
   order: two
-  items: 
+  total: 30.00
+  tender:
+    data:
+      id: 4ee27943-f6b5-49cd-a79b-16e988fe9de2
+      token: '12345'
+      expiration_month: 5
+      expiration_year: 2030
+
+three:
+  order: three
+  total: 15.00
+  tender:
+    data:
+      id: 8478fecc-6144-44bd-8b85-118626f6d5a8
+      token: '999999999'
+      expiration_month: 8
+      expiration_year: 2019

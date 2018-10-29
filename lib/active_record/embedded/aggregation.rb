@@ -56,7 +56,11 @@ module ActiveRecord
       #
       # @private
       def query_for(record)
-        record.public_send(as).where(filters)
+        data = record.public_send(as)
+
+        return [data].compact unless data.is_a? Relation
+
+        data.where(filters)
       end
     end
   end

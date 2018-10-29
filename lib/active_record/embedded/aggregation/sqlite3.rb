@@ -5,6 +5,8 @@ module ActiveRecord
     class Aggregation
       # SQLite3 driver for aggregation queries
       class Sqlite3 < Aggregation
+        QUERY = "json_extract(?, '$.data[*].?') = ?"
+
         def results
           models = filtered_results
           models.offset(from) unless from.zero?
@@ -16,7 +18,7 @@ module ActiveRecord
 
         def filtered_results
           filters.each_with_object(relation) do |(key, value), criteria|
-            criteria.where("json_extract(?, '$.data[*].?') = ?", as, key, value)
+            criteria.where(QUERY, as, key, value)
           end
         end
 
