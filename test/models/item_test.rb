@@ -124,4 +124,19 @@ class ItemTest < ActiveSupport::TestCase
     assert_equal 'bar', item.product_attributes[:foo]
     assert_equal 1, item.price_adjustments.first[:price]
   end
+
+  test 'query all items with sqlite adapter' do
+    ActiveRecord::Embedded.config.adapter = :sqlite3
+
+    collection = Item.where(quantity: 1)
+    order1 = orders(:one)
+    order2 = orders(:one)
+
+    refute_empty collection
+    assert_includes collection, order1.items.find_by(quantity: 1)
+    assert_includes collection, order2.items.find_by(quantity: 1)
+    refute_includes collection, order2.items.find_by(quantity: 2)
+  ensure
+    ActiveRecord::Embedded.config.adapter = :native
+  end
 end
