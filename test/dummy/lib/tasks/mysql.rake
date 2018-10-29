@@ -62,7 +62,7 @@ namespace :mysql do
     }
 
     # set config variables for custom database
-    ENV['SCHEMA'] = 'db/mysql_schema.rb'
+    ENV['SCHEMA'] = 'test/dummy/db/mysql_schema.rb'
     Rails.application.config.paths['db/migrate'] = ['db/migrate_mysql']
     Rails.application.config.paths['db/seeds'] = ['db/seeds.rb']
     Rails.application.config.paths['config/database'] = [
