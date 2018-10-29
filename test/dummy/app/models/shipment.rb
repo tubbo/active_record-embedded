@@ -1,12 +1,12 @@
 # Test model using MySQL
 class Shipment < ApplicationRecord
+  include ActiveRecord::Embedded
+
   establish_connection(
     adapter: 'mysql2',
     username: 'root',
     database: 'active_record_embedded_test'
   )
-
-  include ActiveRecord::Embedded
 
   belongs_to :order
 
