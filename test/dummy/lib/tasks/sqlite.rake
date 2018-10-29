@@ -48,8 +48,8 @@ namespace :sqlite do
 
     # append and prepend proper tasks to all the tasks defined here above
     ns.tasks.each do |task|
-      task.enhance ['app:mysql:set_custom_config'] do
-        Rake::Task['app:mysql:revert_to_original_config'].invoke
+      task.enhance ['app:sqlite:set_custom_config'] do
+        Rake::Task['app:sqlite:revert_to_original_config'].invoke
       end
     end
   end
@@ -62,7 +62,7 @@ namespace :sqlite do
     }
 
     # set config variables for custom database
-    ENV['SCHEMA'] = 'db/mysql_schema.rb'
+    ENV['SCHEMA'] = 'db/sqlite_schema.rb'
     Rails.application.config.paths['db/migrate'] = ['db/migrate_sqlite']
     Rails.application.config.paths['db/seeds'] = ['db/seeds.rb']
     Rails.application.config.paths['config/database'] = [
