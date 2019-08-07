@@ -268,7 +268,7 @@ module ActiveRecord
         # of the given object.
         def coerce(value = nil)
           return if value.blank?
-          Money.new(value['$cents'], value['$currency'])
+          ::Money.new(value['$cents'], value['$currency'])
         end
       end
     end
