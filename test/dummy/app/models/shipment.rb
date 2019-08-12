@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 # Test model using MySQL
 class Shipment < ApplicationRecord
   establish_connection(
-    adapter: 'mysql2',
-    username: 'root',
-    database: 'active_record_embedded_test'
+    YAML.load_file(
+      Rails.root.join('config', 'database_mysql.yml')
+    )[Rails.env].with_indifferent_access
   )
 
   include ActiveRecord::Embedded
