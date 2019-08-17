@@ -3,12 +3,24 @@
 module ActiveRecord
   module Embedded
     # Aggregations are queries made across the entire database, rather
-    # than within a certain record. Since aggregations require
+    # than within a certain record. These queries are used when
+    # the ActiveRecord API is used on the class level, e.g.
+    # `Model.where`. Aggregation queries can become resource-intensive when
+    # performed using native Ruby, therefore special adapters are
+    # included for databases whose query languages support JSON and/or
+    # embedded, schema-less attributes.
+    #
+    # Adapters of this kind are subclasses of an Aggregation, and all
+    # they need to do is implement the `#results` method to produce
+    # a 2-dimensional Array of embedded records.
     #
     # @abstract Subclass to define a new adapter
     class Aggregation
       include Query
       extend Interface
+
+      class_attribute :serialized
+      self.serialized = false if serialized.nil?
 
       delegate :parent_model, to: :model
       delegate :as, to: :parent_model

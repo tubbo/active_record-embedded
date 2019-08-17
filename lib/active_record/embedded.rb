@@ -82,6 +82,10 @@ module ActiveRecord
       false
     end
 
+    def self.adapter
+      Aggregation.find(config.adapter)
+    end
+
     class_methods do
       # @!method embeds_many(name, class_name: nil)
       #   Create a one-to-many relationship with an embedded model.
@@ -90,7 +94,7 @@ module ActiveRecord
       #   @param [String] class_name - (optional) Class name of the model.
       def embeds_many(name, **options)
         embeds[name] = assoc = Association::Many.new(name: name, **options)
-        serialize name, Hash if Embedded.config.serialize_data
+        serialize name, Hash if Embedded.adapter.serialized
         define_method(name) { assoc.query(self) }
         define_method("#{name}=") { |value| assoc.assign(self, value) }
         define_method("reindex_#{name}") { assoc.index(self) }
@@ -103,7 +107,7 @@ module ActiveRecord
       #   @param [String] class_name - (optional) Class name of the model.
       def embeds_one(name, **options)
         embeds[name] = assoc = Association::One.new(name: name, **options)
-        serialize name, Hash if Embedded.config.serialize_data
+        serialize name, Hash if Embedded.adapter.serialized
         define_method(name) { assoc.query(self) }
         define_method("#{name}=") { |value| assoc.assign(self, value) }
         define_method("create_#{name}") { |value| assoc.create(self, value) }
