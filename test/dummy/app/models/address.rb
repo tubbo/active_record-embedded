@@ -13,4 +13,7 @@ class Address
   field :country
   field :postal_code
   field :postal_code_validator, type: Regexp
+  field :kind, type: Symbol, default: :billing
+
+  validates :kind, inclusion: %i[billing shipping]
 end

@@ -40,7 +40,7 @@ module ActiveRecord
         # @return [TrueClass] if the operation succeeded
         # @throws [ActiveRecord::RecordNotSaved] if an error occurs
         def save!
-          raise RecordNotSaved, errors unless valid?
+          raise RecordNotSaved, errors.full_messages.to_sentence unless valid?
 
           run_callbacks :save do
             persist! && _parent.save!
@@ -60,7 +60,7 @@ module ActiveRecord
         # @return [TrueClass] if the operation succeeded
         # @throws [ActiveRecord::RecordNotSaved] if an error occurs
         def update!(params = {})
-          raise RecordNotValid, errors unless valid?
+          raise RecordNotValid, errors.full_messages.to_sentence unless valid?
 
           assign_attributes(params) && save!
         end
@@ -77,7 +77,7 @@ module ActiveRecord
         # Delete this model. Throw an error if unsuccessful.
         #
         # @return [TrueClass] if the operation succeeded
-        # @throws [ActiveRecord::RecordNotSaved] if an error occurs
+        # @throws [ActiveRecord::RecordNotDestroyed] if an error occurs
         def destroy!
           destroy || raise(RecordNotDestroyed, self)
         end

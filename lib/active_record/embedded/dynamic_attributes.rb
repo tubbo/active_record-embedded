@@ -16,7 +16,7 @@ module ActiveRecord
         return super unless respond_to? method
 
         attribute = method.to_s.delete('=').to_sym
-        return self[attribute] if attribute == method
+        return coerce(attribute, self[attribute]) if attribute == method
 
         self[attribute] = cast(attribute, value)
       end
@@ -25,7 +25,7 @@ module ActiveRecord
       #
       # @return [TrueClass]
       def respond_to_missing?(method, include_private = false)
-        method.to_s.end_with?('=') || super
+        method.to_s.end_with?('=') || has_attribute?(method) || super
       end
 
       # Override to rescue the error thrown when a field is not defined,

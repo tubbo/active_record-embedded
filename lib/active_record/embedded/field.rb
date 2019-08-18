@@ -25,23 +25,30 @@ module ActiveRecord
         !@default.nil?
       end
 
-      # Name of the method holding the default value.
+      # Name of the method holding the default value on the object. The
+      # default value is kept on the embedded model so that its context
+      # can be used to return a default value.
       def default_method_name
         "__#{name}_default__"
       end
 
-      # Cast a given value to this type. Short-circuits when value
-      # passed in is +nil+
+      # @!method cast(value)
+      #   Cast a given value to this type. Short-circuits when value
+      #   passed in is +nil+
       #
-      # @param [Object] value - Value to be casted
-      # @return [Object] Casted value or +nil+ if value was nil.
-      # @abstract Override this method to implement typecasting
-      #           behavior.
-      def cast(value)
-        raise NotImplementedError, "#{self.class.name}#cast"
-      end
+      #   @param [Object] value - Value to be casted
+      #   @return [Object] Casted value
+      #   @abstract Override this method to implement typecasting
+      #             behavior.
 
-      # Attempt to +#cast+ this value unless it's nil.
+      # Attempt to +#cast+ this value unless it's nil. Defined to allow
+      # fields to customize how data is coerced from Ruby values into
+      # the type this field expects. If fields can be coerced naturally
+      # in Ruby, e.g. with `#to_s` on most objects, the field does not
+      # need to explicitly define this method.
+      #
+      # @param [Object] value - Value to be coerced
+      # @return [Object] Casted value or +nil+
       def coerce(value)
         return if value.nil?
 

@@ -29,8 +29,10 @@ module ActiveRecord
       def each
         if model[association.name]['index'].key?(query_name)
           values = model[association.name]['index'][query_name]['values']
-          indexes = params.values.map { |value| values.index(value) }
-          data = indexes.map { |index| model[association.name]['data'][index] }
+          indexes = filters.values.map { |value| values.index(value) }
+          data = indexes.compact.map do |index|
+            model[association.name]['data'][index]
+          end
         else
           data = model[association.name]['data']
           data = apply_filters!(data)

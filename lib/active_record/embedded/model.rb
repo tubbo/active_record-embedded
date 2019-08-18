@@ -17,6 +17,7 @@ module ActiveRecord
       include Querying
       include Storage
       include ActiveRecord::Integration
+      include Comparable
 
       included do
         self.cache_versioning = ActiveRecord::Base.cache_versioning

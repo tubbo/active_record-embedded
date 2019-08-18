@@ -3,7 +3,7 @@
 one:
   address:
     data:
-      id: "a51584a1-c902-4dd4-b0b2-fcae10c4ffcb"
+      id: a51584a1-c902-4dd4-b0b2-fcae10c4ffcb
       name: Lester Tester
       street_1: '123 Fake Street'
       street_2: 'Unit 1'
@@ -11,6 +11,10 @@ one:
       region: 'PA'
       country: 'US'
       postal_code: '12345-6789'
+      postal_code_validator:
+        $pattern: '\d{5}(-\d{4})'
+        $options: 'i'
+      kind: shipping
   items:
     index:
       id:
@@ -18,7 +22,7 @@ one:
           unique: true
         values:
           - ef73c6be-c40f-4f2b-a8ae-2cac75c4b0f6
-          - 99b954d5-e426-4200-8aa8-9f506b5579cd
+          - 99b954d5-e426-4200-8aa8-9f506b5579ch
           - 3b52ebfb-54b3-4e60-be69-6f0775587959
       sku:
         options:
@@ -29,7 +33,7 @@ one:
           - SKU123
     data:
       -
-        id: 99b954d5-e426-4200-8aa8-9f506b5579cd
+        id: ef73c6be-c40f-4f2b-a8ae-2cac75c4b0f6
         sku: SKU123
         quantity: 1
         created_at: <%= Time.current %>
@@ -71,3 +75,8 @@ two:
         id: 42b41c30-ab4e-4859-ab84-c1b3959c9e32
         sku: SKU456
         quantity: 1
+  customizations:
+    data:
+      foo: bar
+      bog: us
+      zzz: 123

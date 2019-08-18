@@ -124,4 +124,31 @@ class ItemTest < ActiveSupport::TestCase
     assert_equal 'bar', item.product_attributes[:foo]
     assert_equal 1, item.price_adjustments.first[:price]
   end
+
+  test 'query within parent object' do
+    order = orders(:one)
+    item = order.items.first
+
+    assert_equal 3, order.items.count
+    assert_equal 2, order.items.offset(1).count
+    assert_equal 1, order.items.limit(1).count
+    assert_equal 1, order.items.offset(1).limit(2).count
+    assert_equal 'SKU456', order.items.order(created_at: :asc).first.sku
+    assert_equal 1, order.items.where(sku: 'SKU456').count
+    assert_equal item, order.items.find(item.id)
+    assert_includes order.items.inspect, item.id
+    assert_nil order.items.find_by(sku: 'BOGUS')
+    assert_raises(ActiveRecord::RecordNotFound) do
+      order.items.find_by!(sku: 'BOGUS')
+    end
+  end
+
+  test 'add new items' do
+    order = orders(:one)
+    item = order.items.create(sku: 'SKU666', quantity: 1)
+
+    assert_kind_of Item, order.items.build
+    assert item.valid?, item.errors.full_messages.to_sentence
+    assert_raises(ActiveRecord::RecordNotSaved) { order.items.create! }
+  end
 end

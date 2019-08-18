@@ -78,8 +78,8 @@ module ActiveRecord
       #
       # @param [Integer] to - Number of records to return
       # @return [ActiveRecord::Embedded::Relation]
-      def limit(to = -1)
-        clone.tap { |query| query.limit = to }
+      def limit(to = 0)
+        clone.tap { |query| query.to = to - 1 }
       end
 
       # Begin returning records starting at the given position.
@@ -87,7 +87,7 @@ module ActiveRecord
       # @param [Integer] from - Start of the offset.
       # @return [ActiveRecord::Embedded::Relation]
       def offset(from = 0)
-        clone.tap { |query| query.offset = from }
+        clone.tap { |query| query.from = from }
       end
 
       # Find a model by the given params. Uses an index if possible,
@@ -109,7 +109,12 @@ module ActiveRecord
       # @return [ActiveRecord::Embedded::Model] if found
       # @throws [ActiveRecord::RecordNotFound] when not found
       def find_by!(params = {})
-        find_by(params) || raise(RecordNotFound, params.to_sentence)
+        find_by(params) || begin
+          message = params.map do |key, value|
+            "#{key}=#{value}"
+          end
+          raise RecordNotFound, message.to_sentence
+        end
       end
 
       # Find a given model in the database by its ID.
@@ -157,11 +162,11 @@ module ActiveRecord
 
         values = index['values']
         position = find_position(params, values)
-        params = model[association.name]['data'][position] unless position.nil?
+        attrs = model[association.name]['data'][position] unless position.nil?
 
-        return unless params.present?
+        return unless attrs.present?
 
-        build(params)
+        build(attrs)
       end
 
       # Find an index for the given query.
