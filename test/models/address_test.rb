@@ -19,7 +19,7 @@ class AddressTest < ActiveSupport::TestCase
   end
 
   test 'read address from the database' do
-    address = orders(:one).address
+    address = Address.new(orders(:one)['address']['data'])
 
     assert_equal(/\d{5}(-\d{4})/i, address.postal_code_validator)
     assert_equal(:shipping, address.kind)
