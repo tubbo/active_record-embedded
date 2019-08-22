@@ -151,4 +151,18 @@ class ItemTest < ActiveSupport::TestCase
     assert item.valid?, item.errors.full_messages.to_sentence
     assert_raises(ActiveRecord::RecordNotSaved) { order.items.create! }
   end
+
+  test 'update existing items' do
+    order = orders(:one)
+    item = order.items.first
+
+    assert item.update!(sku: 'FOO', quantity: 2)
+  end
+
+  test 'cache key' do
+    order = orders(:one)
+    item = order.items.first
+
+    assert item.send(:max_updated_column_timestamp, %i[foo bar])
+  end
 end

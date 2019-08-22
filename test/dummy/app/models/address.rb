@@ -16,4 +16,6 @@ class Address
   field :kind, type: Symbol, default: :billing
 
   validates :kind, inclusion: %i[billing shipping]
+
+  index %i[city region country]
 end

@@ -86,6 +86,14 @@ module ActiveRecord
       Aggregation.find(config.adapter)
     end
 
+    def self.initialize!(adapter)
+      if supports? adapter
+        config.adapter = adapter.to_sym
+      else
+        config.serialize_data = true
+      end
+    end
+
     class_methods do
       # @!method embeds_many(name, class_name: nil)
       #   Create a one-to-many relationship with an embedded model.

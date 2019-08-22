@@ -8,11 +8,7 @@ module ActiveRecord
         db_config = Rails.configuration.database_configuration[Rails.env]
         adapter = db_config['adapter']
 
-        if ActiveRecord::Embedded.supports?(adapter)
-          ActiveRecord::Embedded.config.adapter = adapter.to_sym
-        else
-          ActiveRecord::Embedded.config.serialize_data = true
-        end
+        ActiveRecord::Embedded.initialize!(adapter)
       end
     end
   end

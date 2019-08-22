@@ -28,6 +28,7 @@ class AddressTest < ActiveSupport::TestCase
   test 'inspect attributes' do
     address = orders(:one).address
 
+    assert_includes(Address.new.inspect, 'not initialized')
     assert_includes(address.inspect, address.name)
   end
 end

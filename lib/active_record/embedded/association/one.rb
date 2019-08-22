@@ -51,10 +51,6 @@ module ActiveRecord
           model[name]['data'] = nil
           model[name]['data'].blank?
         end
-
-        def index(_model, _indexes, _data = [])
-          true
-        end
       end
     end
   end

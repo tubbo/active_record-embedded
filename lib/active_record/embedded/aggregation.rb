@@ -45,14 +45,13 @@ module ActiveRecord
         end
       end
 
-      # @abstract Override this method to define behavior when
-      # aggregation query needs to retrieve results from the database.
-      # This should be a 2-dimensional Array with the values +[model, params]+
+      # !@method results
+      #   @abstract Override this method to define behavior when
+      #             aggregation query needs to retrieve results from the
+      #             database. This should be a 2-dimensional Array with the
+      #             values +[model, params]+
       #
-      # @return [Array<Array>] Search results for query
-      def results
-        raise NotImplementedError, "#{self.class.name}#results"
-      end
+      #   @return [Array<Array>] Search results for query
 
       protected
 

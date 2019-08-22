@@ -8,5 +8,11 @@ module ActiveRecord
       assert_kind_of Module, ActiveRecord::Embedded
       assert_kind_of ActiveSupport::Concern, ActiveRecord::Embedded
     end
+
+    test 'initialize!' do
+      ActiveRecord::Embedded.initialize!('sqlserver')
+
+      assert ActiveRecord::Embedded.config.serialize_data
+    end
   end
 end

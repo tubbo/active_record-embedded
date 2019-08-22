@@ -48,7 +48,7 @@ module ActiveRecord
 
         # @return [String]
         def inspect
-          inspection = if @attributes
+          inspection = if @attributes&.any?
                          self.class.field_names.collect do |name|
                            if has_attribute?(name)
                              "#{name}: #{attribute_for_inspect(name)}"
@@ -57,6 +57,7 @@ module ActiveRecord
                        else
                          'not initialized'
                        end
+
           "#<#{self.class} #{inspection}>"
         end
 
@@ -71,8 +72,8 @@ module ActiveRecord
 
         private
 
-        CAMEL_CASED = /[A-Z][a-z]|\s/
-        SCREAMING_SNAKE_CASED = /[A-Z]_/
+        CAMEL_CASED = /[A-Z][a-z]|\s/.freeze
+        SCREAMING_SNAKE_CASED = /[A-Z]_/.freeze
 
         # Create a single attributes Hash from uncased string-key
         # attributes and cased symbol-key attributes.

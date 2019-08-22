@@ -36,15 +36,6 @@ module ActiveRecord
         self.class.field(attribute, type: value.class)
         super
       end
-
-      # Override to rescue the error thrown when a field is not defined,
-      # and define it on-the-fly so it does not get thrown again.
-      def coerce(attribute, value)
-        super
-      rescue Field::NotDefinedError
-        self.class.field(attribute, type: value.class)
-        super
-      end
     end
   end
 end
