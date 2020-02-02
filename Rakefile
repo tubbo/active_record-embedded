@@ -32,4 +32,4 @@ end
 
 RuboCop::RakeTask.new(:lint)
 
-task default: :test
+task default: %i[lint test build]
